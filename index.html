@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>王老十六 MBTI 社交日记 V23</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        /* ============================
+           0. 全局基础 & 调色板
+           ============================ */
+        :root {
+            /* 基础色板 */
+            --green: #00b894; --green-bg: #e6fcf5;
+            --purple: #9c88ff; --purple-bg: #f3f0ff;
+            --yellow: #feca57; --yellow-bg: #fffbf0; 
+            --blue: #0984e3; --blue-bg: #e7f5ff;
+            
+            --active-color: #333; 
+            --active-bg: #f5f5f5;
+            --rpg-theme: #333; 
+        }
+        body { margin: 0; padding: 0; height: 100vh; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow: hidden; background: #fff; -webkit-user-select: none; user-select: none; }
+        .hidden { display: none !important; }
+
+        /* ============================
+           P1: 首页
+           ============================ */
+        #select-page { 
+            position: fixed; inset: 0; z-index: 900; 
+            background: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                        radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+                        radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            display: flex; flex-direction: column; padding: 20px; justify-content: center; overflow: hidden; 
+        }
+
+        .dopa-bg { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
+        .flat-orb { position: absolute; border-radius: 50%; background: var(--orb-color); opacity: 0.6; animation: floatFlat 8s infinite ease-in-out; mix-blend-mode: multiply; }
+        .fo-1 { width: 120px; height: 120px; top: 10%; right: 5%; --orb-color: #ffeaa7; animation-delay: 0s; }
+        .fo-2 { width: 80px; height: 80px; top: 20%; left: 8%; --orb-color: #81ecec; animation-delay: -2s; }
+        .fo-3 { width: 200px; height: 200px; bottom: 5%; left: -40px; --orb-color: #fab1a0; animation-delay: -4s; }
+        .fo-4 { width: 100px; height: 100px; bottom: 30%; right: -20px; --orb-color: #a29bfe; animation-delay: -1s; }
+        
+        .logo-main { font-size: 34px; font-weight: 900; text-align: center; margin-bottom: 30px; color: #2d3436; letter-spacing: 2px; z-index: 2; }
+        .grid-wrapper { max-width: 400px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; z-index: 2; }
+        
+        .cat-row { 
+            padding: 12px; border-radius: 18px; 
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.4);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            transition: transform 0.2s;
+        }
+        .c-green { background: rgba(0, 184, 148, 0.1); } .c-purple { background: rgba(156, 136, 255, 0.1); } .c-yellow { background: rgba(254, 202, 87, 0.1); } .c-blue { background: rgba(9, 132, 227, 0.1); }
+        .cat-label { font-size: 14px; font-weight: 900; margin-bottom: 8px; display: flex; align-items: center; text-transform: uppercase; padding-left: 5px; color: #555; }
+        .btn-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+
+        .detail-btn { 
+            height: 44px; border-radius: 12px; border: none;
+            font-weight: 900; font-size: 14px; cursor: pointer; 
+            color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15); transition: transform 0.1s;
+        }
+        .detail-btn:active { transform: scale(0.9); filter: brightness(0.9); }
+        .c-green .detail-btn { background: var(--green); } .c-purple .detail-btn { background: var(--purple); }
+        .c-yellow .detail-btn { background: var(--yellow); } .c-blue .detail-btn { background: var(--blue); }
+        
+        .footer-logo-p1 { text-align: center; margin-top: 30px; font-size: 12px; font-weight: bold; color: #b2bec3; z-index: 2;}
+
+        /* ============================
+           P2: 主页
+           ============================ */
+        #main-page { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; position: relative; }
+        .bg-orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.6; z-index: -1; transition: background 1s ease; animation: floatOrb 10s infinite ease-in-out; } 
+        .heal-card { width: 85%; max-width: 360px; background: rgba(255,255,255,0.85); backdrop-filter: blur(30px); border-radius: 30px; padding: 25px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; border: 1px solid rgba(255,255,255,0.8); position: relative; overflow: hidden; }
+        .card-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; position: relative; z-index: 2; }
+        
+        /* 灯泡与流星 */
+        .bulb-box { height: 140px; width: 140px; display: flex; justify-content: center; align-items: center; margin: 10px 0; position: relative; }
+        .bulb-icon { font-size: 80px; color: #dfe6e9; cursor: pointer; transition: color 0.5s; position: relative; z-index: 10;}
+        .bulb-animate { animation: bulbFlash 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .orbit-star { position: absolute; width: 100%; height: 100%; border-radius: 50%; animation: spinOrbit 4s linear infinite; pointer-events: none; }
+        .orbit-star::before { content: ''; position: absolute; top: 0; left: 50%; width: 8px; height: 8px; background: #fdcb6e; border-radius: 50%; box-shadow: 0 0 10px #fdcb6e, 0 0 20px #fdcb6e, -2px -2px 0 rgba(253, 203, 110, 0.5); transform: translateX(-50%); }
+        .particle { position: absolute; width: 6px; height: 6px; background: var(--active-color); border-radius: 50%; pointer-events: none; z-index: 20; opacity: 0; }
+        @keyframes suckIn { 0% { transform: translate(var(--tx), var(--ty)) scale(1); opacity: 1; } 100% { transform: translate(0, 0) scale(0.2); opacity: 0; } }
+
+        .user-badge { font-size: 14px; font-weight: 900; color: #888; background: rgba(255,255,255,0.6); padding: 6px 16px; border-radius: 20px; margin-bottom: 20px; position: relative; z-index: 2;} 
+        .quote-box { min-height: 110px; width: 100%; text-align: center; background: var(--active-bg); border-radius: 16px; padding: 20px 15px; box-sizing: border-box; border-left: 4px solid var(--active-color); position: relative; z-index: 2; transition: 0.3s; opacity: 0; transform: translateY(10px); }
+        .quote-box.show { opacity: 1; transform: translateY(0); }
+        .emoji { font-size: 40px; display: block; margin-bottom: 10px; animation: float 3s infinite; }
+        .quote-txt { font-size: 17px; color: #444; line-height: 1.7; font-weight: bold; font-family: "Songti SC", "Noto Serif SC", "Georgia", serif; }
+        
+        .energy-pill, .tools, .btn-collect { position: relative; z-index: 2; }
+        .energy-pill { background: rgba(255,255,255,0.8); padding: 6px 14px; border-radius: 20px; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 900; color: #636e72; }
+        .score-pop { animation: scoreScale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: var(--active-color) !important; }
+        .mini-btn { width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,0.8); border: none; color: #555; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .btn-collect { background: var(--active-color); color: #fff; width: 100%; padding: 16px; border: none; border-radius: 16px; font-weight: bold; margin-top: 20px; font-size: 15px; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+        
+        /* 修复：重置按钮层级提高，防止点不到 */
+        .footer-logo-shadow { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); color: rgba(0,0,0,0.3); font-size: 12px; font-weight: 900; cursor: pointer; z-index: 9999; padding: 15px; pointer-events: auto; user-select: none; }
+
+        /* ============================
+           P4: 社交日记 RPG
+           ============================ */
+        #game-layer { position: fixed; inset: 0; z-index: 1100; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; }
+        .rpg-card { width: 90%; max-width: 380px; background: #fff; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); padding: 0; overflow: hidden; animation: popUp 0.3s ease-out; display: flex; flex-direction: column; border: 1px solid #eee; }
+        
+        .rpg-header-block { background: var(--rpg-theme); padding: 25px 20px; color: #fff; position: relative; }
+        .rpg-top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .rpg-title { font-size: 14px; font-weight: bold; opacity: 0.9; display: flex; align-items: center; gap: 8px; }
+        .rpg-close { background: rgba(255,255,255,0.2); width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+        .rpg-main-info { text-align: center; margin-top: 10px; }
+        .rpg-big-type { font-size: 40px; font-weight: 900; letter-spacing: 1px; }
+        .rpg-lvl { background: #fff; color: var(--rpg-theme); padding: 2px 10px; border-radius: 10px; font-size: 12px; font-weight: bold; vertical-align: middle; margin-left: 10px; }
+
+        .rpg-body { padding: 20px; }
+        .rpg-stats { display: flex; justify-content: space-around; background: #f9f9f9; padding: 15px; border-radius: 12px; margin-bottom: 20px; }
+        .stat-i { text-align: center; } .stat-n { font-size: 18px; font-weight: 900; color: #333; display: block; } .stat-l { font-size: 12px; color: #999; font-weight: bold; }
+
+        /* 全彩关系图谱 */
+        .relation-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; margin-bottom: 20px; background: #fff; padding: 10px; border-radius: 12px; border: 1px solid #eee; }
+        .rel-block { aspect-ratio: 1; border-radius: 6px; background: #f0f0f0; transition: all 0.3s; position: relative; display: flex; justify-content: center; align-items: center; }
+        .rel-block span { font-size: 8px; color: #fff; opacity: 0; font-weight: bold; transform: scale(0.8); transition: 0.2s; }
+        .rel-active { opacity: 1; }
+        /* 阵营颜色 */
+        .rel-green { background-color: var(--green); opacity: 0.2; } .rel-green.has-val { opacity: 1; }
+        .rel-purple { background-color: var(--purple); opacity: 0.2; } .rel-purple.has-val { opacity: 1; }
+        .rel-yellow { background-color: var(--yellow); opacity: 0.2; } .rel-yellow.has-val { opacity: 1; }
+        .rel-blue { background-color: var(--blue); opacity: 0.2; } .rel-blue.has-val { opacity: 1; }
+        
+        .rel-block:hover { transform: scale(1.2); z-index: 10; }
+        .rel-block:hover span { opacity: 1; transform: scale(1); }
+
+        .rpg-log-area { background: #fff; border: 2px dashed #eee; border-radius: 12px; height: 150px; overflow-y: auto; padding: 15px; font-size: 13px; line-height: 1.6; color: #555; margin-bottom: 20px; }
+        .log-entry { margin-bottom: 8px; border-bottom: 1px solid #f9f9f9; padding-bottom: 8px; }
+        .log-time { font-size: 12px; color: #bbb; margin-right: 5px; }
+
+        .rpg-btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .rpg-btn { border: none; padding: 15px; border-radius: 12px; font-weight: bold; font-size: 15px; cursor: pointer; color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .btn-social { background: var(--rpg-theme); } .btn-med { background: #b2bec3; }
+
+        /* 16人格选择弹窗 & 心情弹窗 */
+        #type-selector { position: absolute; bottom: 0; left: 0; width: 100%; height: auto; background: #fff; z-index: 20; transform: translateY(100%); transition: 0.3s; padding: 25px; box-sizing: border-box; border-radius: 25px 25px 0 0; box-shadow: 0 -10px 40px rgba(0,0,0,0.1); }
+        #type-selector.open { transform: translateY(0); }
+        .sel-header { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; color: #333; font-size: 16px; }
+        
+        /* 居中 Grid */
+        .type-grid-16 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; justify-items: center; }
+        .type-btn { width: 100%; padding: 12px 0; background: #f5f7fa; border: none; border-radius: 10px; font-weight: bold; color: #555; cursor: pointer; font-size: 12px; transition: 0.2s; }
+        .type-btn:active { background: var(--rpg-theme); color: #fff; transform: scale(0.95); }
+
+        /* 心情选择界面 */
+        #mood-ui { display: none; text-align: center; }
+        .mood-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .mood-btn { padding: 20px; border-radius: 15px; border: none; font-weight: bold; font-size: 16px; cursor: pointer; color: #fff; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .m-good { background: #00b894; box-shadow: 0 5px 15px rgba(0,184,148,0.3); }
+        .m-bad { background: #e17055; box-shadow: 0 5px 15px rgba(225,112,85,0.3); }
+        .mood-icon { font-size: 30px; }
+
+        /* 通用 */
+        .toast-msg { position: fixed; color: #fff; background: rgba(0,0,0,0.8); font-weight: bold; font-size: 14px; pointer-events: none; z-index: 9999; animation: fadeUp 1.5s ease-out forwards; padding: 10px 20px; border-radius: 30px; top: 20%; left: 50%; transform: translateX(-50%); white-space: nowrap; }
+        .reset-feedback { position: fixed; color: #333; font-weight: 900; font-size: 20px; pointer-events: none; z-index: 9999; animation: flyUp 0.6s ease-out forwards; background: rgba(255,255,255,0.9); padding: 5px 12px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transform: translate(-50%, -100%); white-space: nowrap;}
+        
+        #welcome-overlay { position: fixed; inset: 0; z-index: 2000; background: rgba(255,255,255,0.95); display: flex; justify-content: center; align-items: center; animation: fadeIn 0.4s ease-out; }
+        .welcome-card { width: 80%; max-width: 320px; background: #fff; border-radius: 24px; padding: 40px 30px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.15); border: 1px solid rgba(0,0,0,0.05); }
+        .w-icon { font-size: 60px; margin-bottom: 20px; display: inline-block; } .w-main { font-size: 26px; font-weight: 900; margin-bottom: 30px; color: #333; } .w-quote-box { background: #f8f9fa; border-radius: 16px; padding: 20px; margin-bottom: 30px; } .w-btn { width: 100%; padding: 16px; border-radius: 14px; border: none; background: var(--active-color); color: #fff; font-size: 16px; font-weight: 900; cursor: pointer; }
+
+        /* P5/P3 省略样式补全 */
+        #profile-overlay { position: fixed; inset: 0; z-index: 1200; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; }
+        .profile-card { width: 300px; background: #fff; border-radius: 20px; overflow: hidden; position: relative; } .pc-header { height: 80px; background: #eee; display: flex; align-items: flex-end; padding: 20px; } .pc-avatar { font-size: 50px; position: absolute; bottom: -25px; left: 20px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2)); } .pc-content-container { position: relative; min-height: 280px; } .pc-page { padding: 35px 20px 20px 20px; position: absolute; width: 100%; height: 100%; box-sizing: border-box; transition: 0.3s; background: #fff; opacity: 0; pointer-events: none; } .pc-page.active { opacity: 1; pointer-events: auto; } .pc-nav { display: flex; justify-content: space-between; padding: 15px 20px; background: #fafafa; } .pc-row { margin-bottom: 15px; } .pc-label { font-size: 12px; color: #999; font-weight: bold; display: block; } .pc-val { font-size: 15px; font-weight: bold; color: #333; } .highlight-box { background: #f0f9ff; border-left: 3px solid #74b9ff; padding: 10px; border-radius: 8px; font-size: 13px; color: #636e72; } .shadow-box { background: #fff5f5; border-left: 3px solid #ff7675; padding: 10px; border-radius: 8px; font-size: 13px; color: #636e72; } .close-pc { position: absolute; top: 15px; right: 15px; color: rgba(255,255,255,0.8); font-size: 24px; cursor: pointer; z-index: 10; }
+        
+        #turntable-overlay { position: fixed; inset: 0; z-index: 3000; background:rgba(20,20,30,0.96); display:flex; flex-direction:column; align-items:center; justify-content:center; } .wheel-outer { width:300px; height:300px; border-radius:50%; padding:8px; background:linear-gradient(45deg, #f1c40f, #f39c12, #f1c40f); box-shadow: 0 0 40px rgba(241,196,15,0.2); margin-bottom:30px; position:relative; } .wheel-inner { width:100%; height:100%; border-radius:50%; background:#222; overflow:hidden; transition:transform 4s cubic-bezier(0.1,0.9,0.2,1); border:4px solid #fff; box-sizing:border-box; } .pointer-cute { position:absolute; top:-22px; left:50%; width:36px; height:46px; background:#ff6b6b; border:3px solid #fff; border-radius:50% 50% 50% 0; transform:translateX(-50%) rotate(-45deg); z-index:20; } .center-btn { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:60px; height:60px; border-radius:50%; background:#fff; display:flex; justify-content:center; align-items:center; font-weight:900; cursor:pointer; z-index:10; } .dock { display:flex; gap:20px; } .dock-icon { width:44px; height:44px; border-radius:50%; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:#fff; font-size:18px; cursor:pointer; display:flex; justify-content:center; align-items:center; } #settings-box { position:fixed; inset:0; z-index:3100; background:#fff; padding:30px; border-radius:25px 25px 0 0; transform:translateY(100%); transition:0.3s; } #settings-box.open { transform:translateY(0); } .num-control { display:flex; justify-content:center; gap:20px; margin-bottom:15px; } .num-btn { width:40px; height:40px; border-radius:8px; border:none; background:#eee; font-size:20px; font-weight:bold; cursor:pointer; } .s-input { width:100%; padding:12px; background:#f1f2f6; border:none; border-radius:8px; margin-bottom:8px; } .s-btn { width:100%; padding:14px; background:#2d3436; color:#fff; border:none; border-radius:12px; margin-top:10px; font-weight:bold; }
+
+        @keyframes spinOrbit { from{transform:rotate(0deg)} to{transform:rotate(360deg)} } @keyframes bulbFlash { 0% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(253, 203, 110, 0)); color: #dfe6e9; } 40% { transform: scale(1.15); filter: drop-shadow(0 0 40px rgba(253, 203, 110, 0.9)); color: #fdcb6e; } 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(253, 203, 110, 0.4)); color: #fdcb6e; } } @keyframes scoreScale { 0%{transform:scale(1)} 50%{transform:scale(1.5)} 100%{transform:scale(1)} } @keyframes floatFlat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-15px)} } @keyframes popUp { from{transform:scale(0.8);opacity:0} to{transform:scale(1);opacity:1} } @keyframes fadeUp { 0%{opacity:0;transform:translate(-50%,20px)} 20%{opacity:1;transform:translate(-50%,0)} 80%{opacity:1} 100%{opacity:0;transform:translate(-50%,-20px)} } @keyframes flyUp { 0%{transform:translate(-50%, -100%); opacity:1} 100%{transform:translate(-50%, -180%); opacity:0} } @keyframes fadeIn { from{opacity:0} to{opacity:1} } @keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+
+    </style>
+</head>
+<body>
+
+    <div id="select-page">
+        <div class="dopa-bg">
+            <div class="flat-orb fo-1"></div><div class="flat-orb fo-2"></div><div class="flat-orb fo-3"></div><div class="flat-orb fo-4"></div>
+        </div>
+        <h1 class="logo-main">王老十六 MBTI</h1>
+        <div class="grid-wrapper">
+            <div class="cat-row c-green"><div class="cat-label">理想主义 (NF)</div><div class="btn-grid"><button class="detail-btn" onclick="saveUser('INFP','green', this)">INFP</button><button class="detail-btn" onclick="saveUser('INFJ','green', this)">INFJ</button><button class="detail-btn" onclick="saveUser('ENFP','green', this)">ENFP</button><button class="detail-btn" onclick="saveUser('ENFJ','green', this)">ENFJ</button></div></div>
+            <div class="cat-row c-purple"><div class="cat-label">理性分析 (NT)</div><div class="btn-grid"><button class="detail-btn" onclick="saveUser('INTJ','purple', this)">INTJ</button><button class="detail-btn" onclick="saveUser('INTP','purple', this)">INTP</button><button class="detail-btn" onclick="saveUser('ENTJ','purple', this)">ENTJ</button><button class="detail-btn" onclick="saveUser('ENTP','purple', this)">ENTP</button></div></div>
+            <div class="cat-row c-yellow"><div class="cat-label">自由探险 (SP)</div><div class="btn-grid"><button class="detail-btn" onclick="saveUser('ISTP','yellow', this)">ISTP</button><button class="detail-btn" onclick="saveUser('ISFP','yellow', this)">ISFP</button><button class="detail-btn" onclick="saveUser('ESTP','yellow', this)">ESTP</button><button class="detail-btn" onclick="saveUser('ESFP','yellow', this)">ESFP</button></div></div>
+            <div class="cat-row c-blue"><div class="cat-label">忠诚守护 (SJ)</div><div class="btn-grid"><button class="detail-btn" onclick="saveUser('ISTJ','blue', this)">ISTJ</button><button class="detail-btn" onclick="saveUser('ISFJ','blue', this)">ISFJ</button><button class="detail-btn" onclick="saveUser('ESTJ','blue', this)">ESTJ</button><button class="detail-btn" onclick="saveUser('ESFJ','blue', this)">ESFJ</button></div></div>
+        </div>
+        <div class="footer-logo-p1">王老十六 © WANG16 MBTI</div>
+    </div>
+
+    <div id="welcome-overlay" class="hidden">
+        <div class="welcome-card">
+            <div class="w-icon" id="wIcon">🎉</div>
+            <div class="w-title">恭喜您成为</div>
+            <div class="w-main"><span id="wAdj"></span> 的 <span class="w-highlight" id="wType">INTJ</span></div>
+            <div class="w-quote-box"><div class="w-quote" id="wQuote">“...”</div></div>
+            <button class="w-btn" onclick="closeWelcome()">开启旅程</button>
+        </div>
+    </div>
+
+    <div id="main-page" class="hidden">
+        <div class="bg-orb orb-1"></div><div class="bg-orb orb-2"></div><div class="bg-orb orb-3"></div>
+        <div class="heal-card">
+            <div class="card-header">
+                <div class="energy-pill"><i class="fa-solid fa-bolt" style="color:#f1c40f;"></i><span id="scoreDisplay">0</span></div>
+                <div class="tools">
+                    <button class="mini-btn" onclick="openProfile()"><i class="fa-regular fa-id-card" style="color:#e17055"></i></button>
+                    <button class="mini-btn" onclick="openGame()"><i class="fa-solid fa-gamepad" style="color:#9b59b6"></i></button>
+                    <button class="mini-btn" onclick="toggleWheel(true)"><i class="fa-solid fa-compass" style="color:#0984e3"></i></button>
+                </div>
+            </div>
+            
+            <div class="bulb-box">
+                <div class="orbit-star"></div>
+                <i class="fa-solid fa-lightbulb bulb-icon" id="mainBulb" onmousedown="collectEnergy(event)" ontouchstart="collectEnergy(event)"></i>
+            </div>
+            
+            <div id="userId" class="user-badge"><span id="typeText" class="type-highlight"></span> 专属空间</div>
+            <div class="quote-box" id="quoteArea"><div class="emoji" id="emojiDisplay">✨</div><div class="quote-txt" id="textDisplay">...</div></div>
+            <button class="btn-collect" id="collectBtn" onmousedown="collectEnergy(event)" ontouchstart="collectEnergy(event)">收集能量 (+1)</button>
+        </div>
+        <div class="footer-logo-shadow" id="resetBtn" onmousedown="resetCheck(event)" ontouchstart="resetCheck(event)">王老十六 © WANG16 MBTI</div>
+    </div>
+
+    <div id="game-layer" class="hidden">
+        <div class="rpg-card">
+            <div class="rpg-header-block">
+                <div class="rpg-top-row">
+                    <div class="rpg-title"><i class="fa-solid fa-book-journal-whills"></i> 社交观察日记</div>
+                    <div class="rpg-close" onclick="closeGame()"><i class="fa-solid fa-xmark"></i></div>
+                </div>
+                <div class="rpg-main-info">
+                    <span class="rpg-big-type" id="rpgType">ESTP</span>
+                    <span class="rpg-lvl">LV <span id="rpgLvl">1</span></span>
+                </div>
+            </div>
+            
+            <div class="rpg-body">
+                <div class="rpg-stats">
+                    <div class="stat-i"><span class="stat-n" id="rpgHp">25</span><span class="stat-l">心态(HP)</span></div>
+                    <div class="stat-i"><span class="stat-n" id="rpgExp">25</span><span class="stat-l">经验(EXP)</span></div>
+                </div>
+
+                <div style="font-size:12px;font-weight:bold;color:#999;margin-bottom:5px;">关系好感度图谱</div>
+                <div class="relation-grid" id="relGrid">
+                    </div>
+
+                <div class="rpg-log-area" id="consoleBox">
+                    <div class="log-entry"><span class="log-time">系统</span> 欢迎来到人际观测站。</div>
+                </div>
+
+                <div class="rpg-btn-row">
+                    <button class="rpg-btn btn-social" onclick="openTypeSelector()"><i class="fa-solid fa-user-group"></i> 社交互动</button>
+                    <button class="rpg-btn btn-med" onclick="rpgHeal()"><i class="fa-solid fa-spa"></i> 自我冥想</button>
+                </div>
+            </div>
+
+            <div id="type-selector">
+                <div id="grid-ui">
+                    <div class="sel-header"><span>选择互动对象</span><i class="fa-solid fa-chevron-down" onclick="closeTypeSelector()"></i></div>
+                    <div class="type-grid-16">
+                        <button class="type-btn" onclick="showMoodUI('INFP')">INFP</button><button class="type-btn" onclick="showMoodUI('INFJ')">INFJ</button>
+                        <button class="type-btn" onclick="showMoodUI('ENFP')">ENFP</button><button class="type-btn" onclick="showMoodUI('ENFJ')">ENFJ</button>
+                        <button class="type-btn" onclick="showMoodUI('INTJ')">INTJ</button><button class="type-btn" onclick="showMoodUI('INTP')">INTP</button>
+                        <button class="type-btn" onclick="showMoodUI('ENTJ')">ENTJ</button><button class="type-btn" onclick="showMoodUI('ENTP')">ENTP</button>
+                        <button class="type-btn" onclick="showMoodUI('ISTP')">ISTP</button><button class="type-btn" onclick="showMoodUI('ISFP')">ISFP</button>
+                        <button class="type-btn" onclick="showMoodUI('ESTP')">ESTP</button><button class="type-btn" onclick="showMoodUI('ESFP')">ESFP</button>
+                        <button class="type-btn" onclick="showMoodUI('ISTJ')">ISTJ</button><button class="type-btn" onclick="showMoodUI('ISFJ')">ISFJ</button>
+                        <button class="type-btn" onclick="showMoodUI('ESTJ')">ESTJ</button><button class="type-btn" onclick="showMoodUI('ESFJ')">ESFJ</button>
+                    </div>
+                </div>
+                
+                <div id="mood-ui">
+                    <div class="sel-header"><span id="mood-target-name">与 XXX 的相处体验?</span><i class="fa-solid fa-arrow-left" onclick="backToGrid()"></i></div>
+                    <div class="mood-grid">
+                        <button class="mood-btn m-good" onclick="confirmSocial(true)">
+                            <i class="fa-solid fa-face-smile-beam mood-icon"></i>
+                            <span>相谈甚欢</span>
+                        </button>
+                        <button class="mood-btn m-bad" onclick="confirmSocial(false)">
+                            <i class="fa-solid fa-face-tired mood-icon"></i>
+                            <span>话不投机</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="profile-overlay" class="hidden" onclick="closeProfile(event)"><div class="profile-card" onclick="event.stopPropagation()"><div class="pc-header" id="pcHeader"><i class="fa-solid fa-xmark close-pc" onclick="closeProfile()"></i><div class="pc-avatar" id="pcIcon">🦄</div><div class="pc-type" id="pcTitle">INFP</div></div><div class="pc-content-container"><div class="pc-page active" id="pcPage1"><div class="pc-row"><span class="pc-label">核心关键词</span><div class="pc-val" id="pcTags"></div></div><div class="pc-row"><span class="pc-label">灵魂共鸣</span><div class="pc-val" id="pcResonance">...</div></div><div class="pc-row"><span class="pc-label">天选职业</span><div class="pc-val" id="pcJob">...</div></div><div class="pc-row"><span class="pc-label">最佳匹配</span><div class="pc-val" id="pcMatch">...</div></div></div><div class="pc-page next" id="pcPage2"><div class="pc-row"><span class="pc-label">高光时刻</span><div class="highlight-box" id="pcHigh"></div></div><div class="pc-row"><span class="pc-label">潜在雷区</span><div class="shadow-box" id="pcWeak"></div></div></div></div><div class="pc-nav"><div class="pc-dots"><div class="pc-dot active" id="dot1"></div><div class="pc-dot" id="dot2"></div></div><div class="pc-btn-switch" onclick="switchProfilePage()">下一页 ></div></div></div></div>
+
+    <div id="turntable-overlay" class="hidden"><h2 class="tt-title">命运抉择</h2><div class="wheel-outer"><div class="pointer-cute"></div><div class="wheel-inner" id="wheelCanvas"></div><div class="center-btn" onclick="spin()">GO</div></div><div class="dock"><div class="dock-icon" onclick="toggleWheel(false)"><i class="fa-solid fa-xmark"></i></div><div class="dock-icon" onclick="toggleSettings(true)"><i class="fa-solid fa-gear"></i></div></div><div id="spin-result" style="margin-top:30px;color:#f1c40f;font-size:18px;font-weight:bold;min-height:30px;"></div></div>
+    <div id="settings-box"><div style="display:flex;justify-content:space-between;margin-bottom:15px;"><h3>设置</h3><i class="fa-solid fa-xmark" onclick="toggleSettings(false)" style="font-size:24px;"></i></div><div class="num-control"><button class="num-btn" onclick="modCount(-1)">-</button><span style="font-size:18px;font-weight:bold;line-height:40px;" id="optCount">4项</span><button class="num-btn" onclick="modCount(1)">+</button></div><div id="input-list"></div><button class="s-btn" onclick="saveConfig()">保存</button></div>
+
+    <script>
+        // ================= 数据定义 =================
+        let user={type:'',color:''}, score=0, wheelData=["行动","等待","求助","放弃"], wheelAngle=0, resetCounter=0;
+        const typeColors = { 
+            green: {main:'#00b894', bg:'#e6fcf5'}, purple: {main:'#9c88ff', bg:'#f3f0ff'}, 
+            yellow: {main:'#feca57', bg:'#fffbf0'}, blue: {main:'#0984e3', bg:'#e7f5ff'} 
+        };
+        const profileDB = {
+            "green": { adj:"温润如玉", icon:"🦄", tags:"理想主义 / 治愈 / 共情", res:"世界吻我以痛，我却报之以歌。", job:"作家, 咨询师, 艺术家", match:"ENTJ", high:"极强的共情能力...", weak:"容易陷入情绪内耗..." },
+            "purple": { adj:"洞见未来", icon:"♟️", tags:"逻辑 / 独立 / 战略", res:"真理掌握在少数人手中。", job:"科学家, 投资人", match:"ENFP", high:"逻辑严密...", weak:"显得傲慢..." },
+            "yellow": { adj:"自由不羁", icon:"🔥", tags:"自由 / 冒险 / 乐天", res:"人生苦短，及时行乐。", job:"赛车手, 演员", match:"ISFJ", high:"活在当下...", weak:"缺乏长期规划..." },
+            "blue": { adj:"中流砥柱", icon:"🛡️", tags:"秩序 / 靠谱 / 守护", res:"平平淡淡才是真。", job:"公务员, 医生", match:"ESFP", high:"极度靠谱...", weak:"过于固执..." }
+        };
+        const quotes = {"green":[{e:"🌿",t:"温柔自有力量"}], "purple":[{e:"🧠",t:"思考是性感的"}]}; 
+        
+        let rpgState = { hp: 25, maxHp: 110, exp: 0, lvl: 1, relationship: {} };
+        let currentTarget = ""; // 当前社交对象
+        const COOLDOWN_TIME = 60 * 60 * 1000; 
+
+        // ================= 初始化 =================
+        window.onload = function() {
+            if(localStorage.getItem('w16_user_v16')) { user = JSON.parse(localStorage.getItem('w16_user_v16')); loadMain(false); }
+            score = parseInt(localStorage.getItem('w16_score')||0); updateUI();
+            if(localStorage.getItem('w16_opts')) wheelData=JSON.parse(localStorage.getItem('w16_opts')); drawWheel();
+            if(localStorage.getItem('w16_rpg')) rpgState = JSON.parse(localStorage.getItem('w16_rpg'));
+            if(!rpgState.relationship) rpgState.relationship = {};
+            initGrid();
+        };
+
+        // ================= 逻辑 =================
+        function saveUser(t,c,btn){ 
+            btn.classList.add('clicked');
+            setTimeout(() => {
+                user={type:t,color:c}; localStorage.setItem('w16_user_v16',JSON.stringify(user)); 
+                const d = profileDB[user.color] || profileDB['green'];
+                document.getElementById('wIcon').innerText = d.icon; document.getElementById('wAdj').innerText = d.adj;
+                document.getElementById('wAdj').style.color = typeColors[user.color].main;
+                document.getElementById('wType').innerText = user.type;
+                document.getElementById('wType').style.color = typeColors[user.color].main;
+                document.getElementById('wQuote').innerText = "“ " + d.res + " ”";
+                document.getElementById('welcome-overlay').classList.remove('hidden');
+                btn.classList.remove('clicked');
+            }, 150);
+        }
+
+        function closeWelcome() { document.getElementById('welcome-overlay').classList.add('hidden'); loadMain(true); }
+
+        function loadMain(f){
+            document.getElementById('select-page').classList.add('hidden');
+            document.getElementById('main-page').classList.remove('hidden');
+            const colors = typeColors[user.color];
+            document.getElementById('typeText').innerText = user.type; document.getElementById('typeText').style.color = colors.main;
+            document.documentElement.style.setProperty('--active-color', colors.main);
+            document.documentElement.style.setProperty('--active-bg', colors.bg);
+            document.documentElement.style.setProperty('--rpg-theme', colors.main);
+        }
+
+        function collectEnergy(e){
+            if(e) { e.preventDefault(); e.stopPropagation(); }
+            createParticle(e);
+            
+            const lastTime = parseInt(localStorage.getItem('w16_last_collect') || 0);
+            const now = Date.now();
+            const timeDiff = now - lastTime;
+            const b = document.getElementById('mainBulb');
+            const qBox = document.getElementById('quoteArea');
+            if(navigator.vibrate) navigator.vibrate(20);
+
+            const list = quotes[user.color] || quotes['green'];
+            const item = list[Math.floor(Math.random()*list.length)];
+            document.getElementById('emojiDisplay').innerText = item.e;
+            document.getElementById('textDisplay').innerText = "“ " + item.t + " ”";
+            qBox.classList.remove('show'); setTimeout(()=>qBox.classList.add('show'), 50);
+
+            if (timeDiff < COOLDOWN_TIME) {
+                const rem = COOLDOWN_TIME - timeDiff;
+                showToast(`能量恢复中: ${Math.floor((rem/1000/60)%60)}分${Math.floor((rem/1000)%60)}秒`);
+                return; 
+            }
+            score+=1; localStorage.setItem('w16_score',score); localStorage.setItem('w16_last_collect', now);
+            updateUI(true);
+            b.classList.remove('bulb-animate'); void b.offsetWidth; b.classList.add('bulb-animate');
+            if(navigator.vibrate) navigator.vibrate(50);
+        }
+
+        function createParticle(e) {
+            const box = document.querySelector('.bulb-box');
+            for(let i=0; i<8; i++) {
+                const p = document.createElement('div'); p.className = 'particle';
+                const randX = (Math.random() - 0.5) * 200 + 'px';
+                const randY = (Math.random() - 0.5) * 200 + 'px';
+                p.style.setProperty('--tx', randX); p.style.setProperty('--ty', randY);
+                p.style.left = '50%'; p.style.top = '50%';
+                p.style.animation = `suckIn 0.8s ease-in forwards`;
+                box.appendChild(p); setTimeout(()=>p.remove(), 800);
+            }
+        }
+
+        function updateUI(animate = false){ const s = document.getElementById('scoreDisplay'); s.innerText = score; if(animate) { s.classList.remove('score-pop'); void s.offsetWidth; s.classList.add('score-pop'); } }
+        function showToast(msg) { const old = document.querySelector('.toast-msg'); if(old) old.remove(); const t = document.createElement('div'); t.className = 'toast-msg'; t.innerText = msg; document.body.appendChild(t); setTimeout(()=>t.remove(), 1500); }
+        
+        // 修复：重置逻辑
+        let lastClickTime = 0;
+        function resetCheck(e) {
+            if(e) { e.preventDefault(); }
+            const now = Date.now();
+            if (now - lastClickTime > 1000) resetCounter = 0;
+            lastClickTime = now;
+            resetCounter++;
+            if(resetCounter >= 5) {
+                const tip = document.createElement('div'); tip.className = 'reset-feedback'; tip.innerText = resetCounter + "/16"; 
+                let cx = e.clientX, cy = e.clientY;
+                if(e.touches && e.touches.length > 0) { cx = e.touches[0].clientX; cy = e.touches[0].clientY; }
+                tip.style.left = cx + 'px'; tip.style.top = cy + 'px';
+                document.body.appendChild(tip); setTimeout(()=>tip.remove(), 600);
+            }
+            if(resetCounter >= 16) { 
+                if(navigator.vibrate) navigator.vibrate([100, 50, 100]); 
+                setTimeout(() => { alert("系统已重置，返回首页"); localStorage.clear(); location.reload(); }, 100);
+                resetCounter = 0;
+            }
+        }
+
+        // ================= RPG 社交系统 (新逻辑) =================
+        function openGame() { 
+            document.getElementById('game-layer').classList.remove('hidden'); 
+            document.getElementById('rpgType').innerText = user.type; 
+            initGrid(); updateRpgUI(); 
+        }
+        function closeGame() { document.getElementById('game-layer').classList.add('hidden'); }
+        
+        function openTypeSelector() { document.getElementById('type-selector').classList.add('open'); backToGrid(); }
+        function closeTypeSelector() { document.getElementById('type-selector').classList.remove('open'); }
+
+        // 显示心情界面
+        function showMoodUI(target) {
+            currentTarget = target;
+            document.getElementById('grid-ui').style.display = 'none';
+            document.getElementById('mood-ui').style.display = 'block';
+            document.getElementById('mood-target-name').innerText = `与 ${target} 的互动体验?`;
+        }
+
+        function backToGrid() {
+            document.getElementById('grid-ui').style.display = 'block';
+            document.getElementById('mood-ui').style.display = 'none';
+        }
+
+        // 确认社交结果 (心情抉择)
+        function confirmSocial(isGood) {
+            closeTypeSelector();
+            
+            // 1. 数据变更
+            if(isGood) {
+                rpgState.exp += 5;
+                logToConsole(`与 ${currentTarget} 相谈甚欢，获得 5 经验`, 'log-green');
+            } else {
+                rpgState.hp = Math.max(0, rpgState.hp - 2);
+                logToConsole(`与 ${currentTarget} 话不投机，心态 -2`, 'log-red');
+            }
+
+            // 2. 增加亲密度
+            if(!rpgState.relationship[currentTarget]) rpgState.relationship[currentTarget] = 0;
+            rpgState.relationship[currentTarget] += 1;
+
+            updateRpgUI();
+            initGrid(); 
+        }
+
+        function rpgHeal() {
+            if(rpgState.hp >= rpgState.maxHp) { logToConsole("无需冥想，状态极佳。"); return; }
+            rpgState.hp = Math.min(rpgState.hp + 20, rpgState.maxHp);
+            logToConsole("进行了深度冥想，心态恢复。", "log-green");
+            updateRpgUI();
+        }
+
+        function updateRpgUI() {
+            document.getElementById('rpgHp').innerText = rpgState.hp;
+            document.getElementById('rpgExp').innerText = rpgState.exp;
+            document.getElementById('rpgLvl').innerText = rpgState.lvl;
+            localStorage.setItem('w16_rpg', JSON.stringify(rpgState));
+        }
+
+        function logToConsole(text, colorClass) {
+            const box = document.getElementById('consoleBox');
+            const p = document.createElement('div');
+            p.className = 'log-entry ' + (colorClass || '');
+            const time = new Date().toLocaleTimeString('en-US', {hour12:false, hour:"numeric", minute:"numeric"});
+            p.innerHTML = `<span class="log-time">${time}</span> ${text}`;
+            box.appendChild(p); box.scrollTop = box.scrollHeight;
+        }
+
+        // 全彩图谱逻辑
+        function initGrid() {
+            const grid = document.getElementById('relGrid');
+            grid.innerHTML = '';
+            
+            // 阵营分组
+            const groups = {
+                green: ["INFP","INFJ","ENFP","ENFJ"],
+                purple: ["INTJ","INTP","ENTJ","ENTP"],
+                yellow: ["ISTP","ISFP","ESTP","ESFP"],
+                blue: ["ISTJ","ISFJ","ESTJ","ESFJ"]
+            };
+            
+            // 扁平化顺序
+            const allTypes = [...groups.green, ...groups.purple, ...groups.yellow, ...groups.blue];
+            
+            allTypes.forEach(t => {
+                const val = rpgState.relationship[t] || 0;
+                const div = document.createElement('div');
+                div.className = 'rel-block';
+                
+                // 上色
+                if (groups.green.includes(t)) div.classList.add('rel-green');
+                else if (groups.purple.includes(t)) div.classList.add('rel-purple');
+                else if (groups.yellow.includes(t)) div.classList.add('rel-yellow');
+                else div.classList.add('rel-blue');
+                
+                if(val > 0) div.classList.add('has-val'); // 激活高亮
+                
+                // 微缩文字
+                const span = document.createElement('span');
+                span.innerText = t;
+                div.appendChild(span);
+                
+                div.title = `${t}: 亲密度 ${val}`;
+                grid.appendChild(div);
+            });
+        }
+        
+        let currentProfilePage = 1;
+        function openProfile() { 
+            const d = profileDB[user.color] || profileDB['green']; document.getElementById('profile-overlay').classList.remove('hidden'); 
+            document.getElementById('pcIcon').innerText = d.icon; document.getElementById('pcTitle').innerText = user.type; document.getElementById('pcHeader').style.background = typeColors[user.color].main; 
+            document.getElementById('pcTags').innerText = d.tags; document.getElementById('pcResonance').innerText = d.res; document.getElementById('pcJob').innerText = d.job; document.getElementById('pcMatch').innerText = d.match;
+            document.getElementById('pcHigh').innerText = d.high; document.getElementById('pcWeak').innerText = d.weak;
+            currentProfilePage = 1; updateProfileView();
+        }
+        function switchProfilePage() { currentProfilePage = currentProfilePage === 1 ? 2 : 1; updateProfileView(); }
+        function updateProfileView() {
+            const p1 = document.getElementById('pcPage1'); const p2 = document.getElementById('pcPage2');
+            const d1 = document.getElementById('dot1'); const d2 = document.getElementById('dot2');
+            if (currentProfilePage === 1) { p1.className = 'pc-page active'; p2.className = 'pc-page next'; d1.classList.add('active'); d2.classList.remove('active'); } 
+            else { p1.className = 'pc-page prev'; p2.className = 'pc-page active'; d1.classList.remove('active'); d2.classList.add('active'); }
+        }
+        function closeProfile(e) { if(!e || e.target.id === 'profile-overlay' || e.target.classList.contains('close-pc')) document.getElementById('profile-overlay').classList.add('hidden'); }
+        function toggleWheel(s){ const e=document.getElementById('turntable-overlay'); s?e.classList.remove('hidden'):e.classList.add('hidden'); }
+        function drawWheel(){ const c=document.getElementById('wheelCanvas'); c.innerHTML=''; const l=wheelData.length, s=360/l, cl=['#e17055','#0984e3','#00b894','#6c5ce7','#fdcb6e','#d63031','#00cec9','#2d3436']; let bg='conic-gradient('; for(let i=0;i<l;i++) bg+=`${cl[i%8]} ${i*s}deg ${(i+1)*s}deg${i<l-1?',':''}`; c.style.background=bg+')'; for(let i=0;i<l;i++){ const t=document.createElement('div'); t.style.position='absolute'; t.style.top='50%'; t.style.left='50%'; t.style.width='110px'; t.style.textAlign='right'; t.innerText=wheelData[i]; t.style.color='#fff'; t.style.fontSize='12px'; t.style.fontWeight='bold'; t.style.transform=`rotate(${(i*s)+(s/2)+180}deg) translateY(-3px)`; t.style.transformOrigin='0 0'; c.appendChild(t); } }
+        function spin(){ const w=document.getElementById('wheelCanvas'), r=document.getElementById('spin-result'); r.innerText=""; wheelAngle += (1800 + Math.floor(Math.random()*360)); w.style.transform=`rotate(${wheelAngle}deg)`; setTimeout(()=>{ const idx = Math.floor(((360 - (wheelAngle%360))%360)/(360/wheelData.length)); r.innerText="✨ "+wheelData[idx]; },4000); }
+        function toggleSettings(o){ const e=document.getElementById('settings-box'); if(o){ renderInp(); e.classList.add('open'); } else e.classList.remove('open'); }
+        function modCount(d){ if(d===1&&wheelData.length<8) wheelData.push("选项"); if(d===-1&&wheelData.length>2) wheelData.pop(); renderInp(); }
+        function renderInp(){ document.getElementById('optCount').innerText = wheelData.length+"项"; const l=document.getElementById('input-list'); l.innerHTML=''; wheelData.forEach((v,i)=>l.innerHTML+=`<input class="s-input" value="${v}" onchange="wheelData[${i}]=this.value">`); }
+        function saveConfig(){ localStorage.setItem('w16_opts',JSON.stringify(wheelData)); drawWheel(); toggleSettings(false); }
+    </script>
+</body>
+</html>
