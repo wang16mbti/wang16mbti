@@ -3,51 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>王老十六 MBTI</title> <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>王老十六 MBTI</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="王老十六">
-
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23333'/%3E%3Cpath d='M100 100 h312 v60 h-126 v80 h100 v60 h-100 v80 h126 v60 h-312 v-60 h126 v-80 h-100 v-60 h100 v-80 h-126 z' fill='%2300b894'/%3E%3C/svg%3E">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23333'/%3E%3Cpath d='M100 100 h312 v60 h-126 v80 h100 v60 h-100 v80 h126 v60 h-312 v-60 h126 v-80 h-100 v-60 h100 v-80 h-126 z' fill='%2300b894'/%3E%3C/svg%3E">
 
     <style>
-        /* ============================
-           0. 全局基础 & 调色板
-           ============================ */
+        /* ================= 全局定义 ================= */
         :root {
             --green: #00b894; --green-bg: #e6fcf5;
             --purple: #9c88ff; --purple-bg: #f3f0ff;
             --yellow: #feca57; --yellow-bg: #fffbf0; 
             --blue: #0984e3; --blue-bg: #e7f5ff;
-            
-            /* 动态主题色 */
-            --active-color: #00b894; 
-            --active-bg: #e6fcf5;
-            --rpg-theme: #00b894; 
+            --active-color: #00b894; --active-bg: #e6fcf5; --rpg-theme: #00b894; 
+            --pixel-font: "Courier New", Courier, monospace; /* 像素感字体 */
         }
         body { margin: 0; padding: 0; height: 100vh; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow: hidden; background: #fff; -webkit-user-select: none; user-select: none; }
         .hidden { display: none !important; }
 
-        /* ============================
-           P1: 首页
-           ============================ */
-        #select-page { 
-            position: fixed; inset: 0; z-index: 900; 
-            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-            display: flex; flex-direction: column; padding: 20px; justify-content: center; overflow: hidden; 
-        }
+        /* P1: 选人界面 */
+        #select-page { position: fixed; inset: 0; z-index: 900; background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); display: flex; flex-direction: column; padding: 20px; justify-content: center; overflow: hidden; }
         .dopa-bg { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
         .flat-orb { position: absolute; border-radius: 50%; background: var(--orb-color); opacity: 0.6; animation: floatFlat 8s infinite ease-in-out; mix-blend-mode: multiply; }
         .fo-1 { width: 120px; height: 120px; top: 10%; right: 5%; --orb-color: #ffeaa7; animation-delay: 0s; }
         .fo-2 { width: 80px; height: 80px; top: 20%; left: 8%; --orb-color: #81ecec; animation-delay: -2s; }
         .fo-3 { width: 200px; height: 200px; bottom: 5%; left: -40px; --orb-color: #fab1a0; animation-delay: -4s; }
         .fo-4 { width: 100px; height: 100px; bottom: 30%; right: -20px; --orb-color: #a29bfe; animation-delay: -1s; }
-        
         .logo-main { font-size: 34px; font-weight: 900; text-align: center; margin-bottom: 30px; color: #2d3436; letter-spacing: 2px; z-index: 2; }
         .grid-wrapper { max-width: 400px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; z-index: 2; }
-        
         .cat-row { padding: 12px; border-radius: 18px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
         .c-green { background: rgba(0, 184, 148, 0.1); } .c-purple { background: rgba(156, 136, 255, 0.1); } .c-yellow { background: rgba(254, 202, 87, 0.1); } .c-blue { background: rgba(9, 132, 227, 0.1); }
         .cat-label { font-size: 14px; font-weight: 900; margin-bottom: 8px; display: flex; align-items: center; text-transform: uppercase; padding-left: 5px; color: #555; }
@@ -57,40 +42,32 @@
         .c-green .detail-btn { background: var(--green); } .c-purple .detail-btn { background: var(--purple); } .c-yellow .detail-btn { background: var(--yellow); } .c-blue .detail-btn { background: var(--blue); }
         .footer-logo-p1 { text-align: center; margin-top: 30px; font-size: 12px; font-weight: bold; color: #b2bec3; z-index: 2;}
 
-        /* ============================
-           P2: 主页
-           ============================ */
+        /* P2: 主页 */
         #main-page { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; position: relative; }
         .bg-orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.6; z-index: -1; transition: background 1s ease; animation: floatOrb 10s infinite ease-in-out; } 
         .heal-card { width: 85%; max-width: 360px; height: 500px; background: rgba(255,255,255,0.85); backdrop-filter: blur(30px); border-radius: 30px; padding: 25px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; border: 1px solid rgba(255,255,255,0.8); position: relative; overflow: visible; }
         .card-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; position: relative; z-index: 2; }
         
-        /* 奔跑小人区域 (V28 重绘) */
         .bulb-box { height: 140px; width: 140px; display: flex; justify-content: center; align-items: center; margin: 10px 0; position: relative; cursor: pointer; }
         .orbit-star { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px dashed rgba(0,0,0,0.05); animation: spinOrbit 10s linear infinite; pointer-events: none; }
         .orbit-star::before { content: ''; position: absolute; top: -4px; left: 50%; width: 8px; height: 8px; background: #fdcb6e; border-radius: 50%; transform: translateX(-50%); box-shadow: 0 0 10px #fdcb6e; }
         
-        /* 像素小人 SVG 设置 */
+        /* 像素小人 SVG */
         .runner-svg { width: 80px; height: 80px; z-index: 10; transition: transform 0.1s; filter: drop-shadow(4px 4px 0 rgba(0,0,0,0.1)); }
         .runner-svg:active { transform: scale(0.9); }
         .runner-svg path { fill: var(--active-color); } 
-        
-        /* 跑步帧动画控制 */
-        .run-frame-1 { display: block; }
-        .run-frame-2 { display: none; }
-        .bulb-box.frame-2 .run-frame-1 { display: none; }
-        .bulb-box.frame-2 .run-frame-2 { display: block; }
+        .run-frame-1 { display: block; } .run-frame-2 { display: none; }
+        .bulb-box.frame-2 .run-frame-1 { display: none; } .bulb-box.frame-2 .run-frame-2 { display: block; }
 
         .particle { position: absolute; width: 6px; height: 6px; background: var(--active-color); border-radius: 50%; pointer-events: none; z-index: 20; opacity: 0; }
-        @keyframes suckIn { 0% { transform: translate(var(--tx), var(--ty)) scale(1); opacity: 1; } 100% { transform: translate(0, 0) scale(0.2); opacity: 0; } }
-
+        
         .user-badge { font-size: 14px; font-weight: 900; color: #888; background: rgba(255,255,255,0.6); padding: 6px 16px; border-radius: 20px; margin-bottom: 20px; position: relative; z-index: 2;} 
         .quote-box { min-height: 110px; width: 100%; text-align: center; background: var(--active-bg); border-radius: 16px; padding: 20px 15px; box-sizing: border-box; border-left: 4px solid var(--active-color); position: relative; z-index: 2; transition: 0.3s; opacity: 0; transform: translateY(10px); }
         .quote-box.show { opacity: 1; transform: translateY(0); }
         .emoji { font-size: 40px; display: block; margin-bottom: 10px; animation: float 3s infinite; }
         .quote-txt { font-size: 17px; color: #444; line-height: 1.7; font-weight: bold; font-family: "Songti SC", sans-serif; }
         
-        .energy-pill { background: rgba(255,255,255,0.8); padding: 6px 14px; border-radius: 20px; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 900; color: #636e72; z-index: 2; }
+        .energy-pill { background: rgba(255,255,255,0.8); padding: 6px 14px; border-radius: 20px; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 900; color: #636e72; z-index: 2; cursor: pointer; }
         .score-pop { animation: scoreScale 0.3s; color: var(--active-color) !important; }
         
         .sidebar-tools { position: absolute; right: 15px; top: 70px; display: flex; flex-direction: column; gap: 12px; z-index: 20; }
@@ -100,9 +77,7 @@
         .btn-collect { background: var(--active-color); color: #fff; width: 100%; padding: 16px; border: none; border-radius: 16px; font-weight: bold; margin-top: 20px; font-size: 15px; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.15); z-index: 2; }
         .footer-logo-shadow { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); color: rgba(0,0,0,0.3); font-size: 12px; font-weight: 900; cursor: pointer; z-index: 9999; padding: 15px; }
 
-        /* ============================
-           P4: RPG
-           ============================ */
+        /* P4: RPG */
         #game-layer { position: fixed; inset: 0; z-index: 1100; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; }
         .rpg-card { width: 90%; max-width: 380px; background: #fff; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); padding: 0; overflow: hidden; animation: popUp 0.3s ease-out; display: flex; flex-direction: column; border: 1px solid #eee; }
         .rpg-header-block { background: var(--rpg-theme); padding: 25px 20px; color: #fff; position: relative; }
@@ -162,24 +137,6 @@
         /* Wheel & Settings */
         #turntable-overlay { position: fixed; inset: 0; z-index: 3000; background:rgba(20,20,30,0.96); display:flex; flex-direction:column; align-items:center; justify-content:center; } .wheel-outer { width:300px; height:300px; border-radius:50%; padding:8px; background:linear-gradient(45deg, #f1c40f, #f39c12, #f1c40f); box-shadow: 0 0 40px rgba(241,196,15,0.2); margin-bottom:30px; position:relative; } .wheel-inner { width:100%; height:100%; border-radius:50%; background:#222; overflow:hidden; transition:transform 4s cubic-bezier(0.1,0.9,0.2,1); border:4px solid #fff; box-sizing:border-box; } .pointer-cute { position:absolute; top:-22px; left:50%; width:36px; height:46px; background:#ff6b6b; border:3px solid #fff; border-radius:50% 50% 50% 0; transform:translateX(-50%) rotate(-45deg); z-index:20; } .center-btn { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:60px; height:60px; border-radius:50%; background:#fff; display:flex; justify-content:center; align-items:center; font-weight:900; cursor:pointer; z-index:10; } .dock { display:flex; gap:20px; } .dock-icon { width:44px; height:44px; border-radius:50%; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:#fff; font-size:18px; cursor:pointer; display:flex; justify-content:center; align-items:center; } #settings-box { position:fixed; inset:0; z-index:3100; background:#fff; padding:30px; border-radius:25px 25px 0 0; transform:translateY(100%); transition:0.3s; } #settings-box.open { transform:translateY(0); } .num-control { display:flex; justify-content:center; gap:20px; margin-bottom:15px; } .num-btn { width:40px; height:40px; border-radius:8px; border:none; background:#eee; font-size:20px; font-weight:bold; cursor:pointer; } .s-input { width:100%; padding:12px; background:#f1f2f6; border:none; border-radius:8px; margin-bottom:8px; } .s-btn { width:100%; padding:14px; background:#2d3436; color:#fff; border:none; border-radius:12px; margin-top:10px; font-weight:bold; }
 
-        /* Diary (V25.1 稳定版风格) */
-        .ticket-card { background: var(--active-bg); padding: 20px; margin-bottom: 15px; border-radius: 16px; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.03); animation: slideInUp 0.5s ease-out; display: flex; flex-direction: column; border-left: 4px solid var(--active-color); }
-        .ticket-header { display: flex; justify-content: space-between; margin-bottom: 10px; align-items: center; }
-        .t-date { font-size: 12px; font-weight: 900; color: #999; }
-        .t-type { font-size: 11px; font-weight: 900; padding: 4px 10px; border-radius: 20px; background: #fff; color: var(--active-color); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .t-content { font-size: 15px; font-weight: bold; color: #444; line-height: 1.6; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
-        .t-footer { margin-top: 15px; display: flex; justify-content: flex-end; gap: 10px; align-items: center; }
-        .t-icon { font-size: 16px; opacity: 0.8; }
-        
-        .input-area { background: #fff; padding: 20px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .switch-row { display: flex; gap: 10px; margin-bottom: 15px; }
-        .switch-btn { flex: 1; padding: 10px; border: none; background: #f0f2f5; border-radius: 10px; font-weight: 900; color: #999; cursor: pointer; transition: 0.2s; }
-        .switch-btn.active { background: var(--active-color); color: #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .text-in { width: 100%; border: none; background: #f9f9f9; border-radius: 12px; padding: 15px; box-sizing: border-box; font-size: 14px; min-height: 80px; resize: none; margin-bottom: 15px; outline: none; color: #333;}
-        .icon-selector { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
-        .is-btn { width: 36px; height: 36px; border-radius: 50%; background: #f0f2f5; display: flex; justify-content: center; align-items: center; font-size: 18px; flex-shrink: 0; cursor: pointer; transition: 0.2s;}
-        .is-btn.sel { background: var(--active-color); border: 2px solid #fff; box-shadow: 0 0 0 2px var(--active-color); }
-
         /* Key Overlay */
         #key-overlay { position: fixed; inset: 0; z-index: 4000; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; }
         .key-card { background: #fff; width: 80%; max-width: 320px; border-radius: 20px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align: center; }
@@ -189,26 +146,117 @@
         .key-confirm { flex: 2; background: var(--active-color); color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
         .key-cancel { flex: 1; background: #eee; color: #555; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
 
+        /* Animations */
         @keyframes spinOrbit { from{transform:rotate(0deg)} to{transform:rotate(360deg)} } @keyframes bulbFlash { 0% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(253, 203, 110, 0)); color: #dfe6e9; } 40% { transform: scale(1.15); filter: drop-shadow(0 0 40px rgba(253, 203, 110, 0.9)); color: #fdcb6e; } 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(253, 203, 110, 0.4)); color: #fdcb6e; } } @keyframes scoreScale { 0%{transform:scale(1)} 50%{transform:scale(1.5)} 100%{transform:scale(1)} } @keyframes floatFlat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-15px)} } @keyframes popUp { from{transform:scale(0.8);opacity:0} to{transform:scale(1);opacity:1} } @keyframes fadeUp { 0%{opacity:0;transform:translate(-50%,20px)} 20%{opacity:1;transform:translate(-50%,0)} 80%{opacity:1} 100%{opacity:0;transform:translate(-50%,-20px)} } @keyframes flyUp { 0%{transform:translate(-50%, -100%); opacity:1} 100%{transform:translate(-50%, -180%); opacity:0} } @keyframes fadeIn { from{opacity:0} to{opacity:1} } @keyframes slideInUp { from{transform:translateY(50px);opacity:0} to{transform:translateY(0);opacity:1} }
         
         /* 悬浮关闭按钮 */
-        .floating-close {
-            position: absolute; right: 20px; top: 20px; z-index: 100;
-            width: 40px; height: 40px; border-radius: 50%;
-            background: rgba(255,255,255,0.9);
-            display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            cursor: pointer;
+        .floating-close { position: absolute; right: 20px; top: 20px; z-index: 100; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.9); display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; }
+
+        /* ================= V30: 疯狂票根样式 & 商店 ================= */
+        
+        /* 1. 票根容器 (日记 & 兑换券统一) */
+        .ticket-stub {
+            background: #fff;
+            position: relative;
+            margin: 20px 0;
+            filter: drop-shadow(0 4px 0 rgba(0,0,0,0.1));
+            font-family: var(--pixel-font);
+            display: flex;
+            flex-direction: column;
+            /* 左右两侧的锯齿圆孔 */
+            background-image: 
+                radial-gradient(circle at 0 10px, transparent 6px, #fff 7px),
+                radial-gradient(circle at 100% 10px, transparent 6px, #fff 7px);
+            background-size: 100% 20px; /* 垂直重复锯齿 */
+            background-position: 0 0, 0 0;
+            background-repeat: repeat-y;
+            padding: 10px 18px; /* 避开锯齿区域 */
+            border-radius: 4px;
         }
+
+        /* 票根头部 */
+        .stub-header {
+            background: var(--active-color); /* 主题色背景 */
+            color: #fff;
+            padding: 10px 15px;
+            text-align: center;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 2px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        .stub-header::after {
+            content: "";
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: rgba(255,255,255,0.3);
+            margin-top: 5px;
+        }
+
+        /* 票根主体 */
+        .stub-body {
+            padding: 10px 5px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+            font-weight: bold;
+            text-align: justify;
+            min-height: 60px;
+        }
+
+        /* 票根底部 (条形码) */
+        .stub-footer {
+            border-top: 2px dashed #ccc;
+            padding-top: 10px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .stub-meta {
+            font-size: 10px;
+            color: #999;
+            font-weight: bold;
+        }
+        .barcode {
+            height: 25px;
+            width: 100px;
+            background: repeating-linear-gradient(
+                90deg,
+                #333 0, #333 2px,
+                transparent 2px, transparent 4px,
+                #333 4px, #333 6px
+            );
+        }
+        
+        /* 遗忘橡皮擦删除按钮 */
+        .stub-delete {
+            position: absolute;
+            top: -10px; right: -10px;
+            width: 30px; height: 30px;
+            background: #ff4757;
+            color: #fff;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            font-weight: bold;
+            z-index: 10;
+            animation: popUp 0.3s;
+        }
+
+        /* 商店商品描述样式 */
+        .shop-item-desc { font-size: 10px; color: #999; margin-top: 4px; font-style: italic; }
 
     </style>
 </head>
 <body>
 
     <div id="select-page">
-        <div class="dopa-bg">
-            <div class="flat-orb fo-1"></div><div class="flat-orb fo-2"></div><div class="flat-orb fo-3"></div><div class="flat-orb fo-4"></div>
-        </div>
+        <div class="dopa-bg"><div class="flat-orb fo-1"></div><div class="flat-orb fo-2"></div><div class="flat-orb fo-3"></div><div class="flat-orb fo-4"></div></div>
         <h1 class="logo-main">王老十六 MBTI</h1>
         <div class="grid-wrapper">
             <div class="cat-row c-green"><div class="cat-label">理想主义 (NF)</div><div class="btn-grid"><button class="detail-btn" onclick="saveUser('INFP','green', this)">INFP</button><button class="detail-btn" onclick="saveUser('INFJ','green', this)">INFJ</button><button class="detail-btn" onclick="saveUser('ENFP','green', this)">ENFP</button><button class="detail-btn" onclick="saveUser('ENFJ','green', this)">ENFJ</button></div></div>
@@ -216,7 +264,7 @@
             <div class="cat-row c-yellow"><div class="cat-label">自由探险 (SP)</div><div class="btn-grid"><button class="detail-btn" onclick="saveUser('ISTP','yellow', this)">ISTP</button><button class="detail-btn" onclick="saveUser('ISFP','yellow', this)">ISFP</button><button class="detail-btn" onclick="saveUser('ESTP','yellow', this)">ESTP</button><button class="detail-btn" onclick="saveUser('ESFP','yellow', this)">ESFP</button></div></div>
             <div class="cat-row c-blue"><div class="cat-label">忠诚守护 (SJ)</div><div class="btn-grid"><button class="detail-btn" onclick="saveUser('ISTJ','blue', this)">ISTJ</button><button class="detail-btn" onclick="saveUser('ISFJ','blue', this)">ISFJ</button><button class="detail-btn" onclick="saveUser('ESTJ','blue', this)">ESTJ</button><button class="detail-btn" onclick="saveUser('ESFJ','blue', this)">ESFJ</button></div></div>
         </div>
-        <div class="footer-logo-p1">王老十六 © WANG16 MBTI V29</div>
+        <div class="footer-logo-p1">王老十六 © WANG16 MBTI V30</div>
     </div>
 
     <div id="welcome-overlay" class="hidden">
@@ -235,7 +283,6 @@
             <div class="card-header">
                 <div class="energy-pill"><i class="fa-solid fa-bolt" style="color:#f1c40f;"></i><span id="scoreDisplay">0</span></div>
             </div>
-            
             <div class="sidebar-tools">
                 <div class="side-btn" onclick="openProfile()"><i class="fa-regular fa-id-card" style="color:#e17055"></i></div>
                 <div class="side-btn" onclick="openGame()"><i class="fa-solid fa-gamepad" style="color:#9b59b6"></i></div>
@@ -244,27 +291,11 @@
                 <div class="side-btn" onclick="openDiary()"><i class="fa-solid fa-pen-nib" style="color:#2ecc71"></i></div>
                 <div class="side-btn" onclick="openKeyUI()"><i class="fa-solid fa-key" style="color:#333"></i></div>
             </div>
-
             <div class="bulb-box" onmousedown="collectEnergy(event)" ontouchstart="collectEnergy(event)">
                 <div class="orbit-star"></div>
-                <svg class="runner-svg run-frame-1" viewBox="0 0 16 16">
-                    <path d="M6,1 h4 v4 h-4 z" />
-                    <path d="M5,5 h6 v5 h-6 z" />
-                    <path d="M5,10 h2 v5 h-2 z" /> 
-                    <path d="M9,10 h2 v3 h2 v-2 h-2 z" />
-                    <path d="M3,6 h2 v3 h-2 z" />
-                    <path d="M11,6 h2 v3 h-2 z" />
-                </svg>
-                <svg class="runner-svg run-frame-2" viewBox="0 0 16 16">
-                     <path d="M6,2 h4 v4 h-4 z" />
-                    <path d="M5,6 h6 v5 h-6 z" />
-                    <path d="M4,11 h3 v-1 h-1 v-2 h-2 z" /> 
-                    <path d="M9,11 h2 v5 h-2 z" />
-                    <path d="M11,7 h3 v2 h-3 z" />
-                    <path d="M3,7 h2 v2 h-2 z" />
-                </svg>
+                <svg class="runner-svg run-frame-1" viewBox="0 0 16 16"><path d="M6,1 h4 v4 h-4 z" /><path d="M5,5 h6 v5 h-6 z" /><path d="M5,10 h2 v5 h-2 z" /><path d="M9,10 h2 v3 h2 v-2 h-2 z" /><path d="M3,6 h2 v3 h-2 z" /><path d="M11,6 h2 v3 h-2 z" /></svg>
+                <svg class="runner-svg run-frame-2" viewBox="0 0 16 16"><path d="M6,2 h4 v4 h-4 z" /><path d="M5,6 h6 v5 h-6 z" /><path d="M4,11 h3 v-1 h-1 v-2 h-2 z" /><path d="M9,11 h2 v5 h-2 z" /><path d="M11,7 h3 v2 h-3 z" /><path d="M3,7 h2 v2 h-2 z" /></svg>
             </div>
-            
             <div id="userId" class="user-badge"><span id="typeText" class="type-highlight"></span> 专属空间</div>
             <div class="quote-box" id="quoteArea"><div class="emoji" id="emojiDisplay">✨</div><div class="quote-txt" id="textDisplay">...</div></div>
             <button class="btn-collect" id="collectBtn" onmousedown="collectEnergy(event)" ontouchstart="collectEnergy(event)">收集能量 (+1)</button>
@@ -275,51 +306,19 @@
     <div id="game-layer" class="hidden">
         <div class="rpg-card">
             <div class="rpg-header-block">
-                <div class="rpg-top-row">
-                    <div class="rpg-title"><i class="fa-solid fa-book-journal-whills"></i> 社交观察日记</div>
-                    <div class="rpg-close" onclick="closeGame()"><i class="fa-solid fa-xmark"></i></div>
-                </div>
-                <div class="rpg-main-info">
-                    <span class="rpg-big-type" id="rpgType">ESTP</span>
-                    <span class="rpg-lvl">LV <span id="rpgLvl">1</span></span>
-                </div>
+                <div class="rpg-top-row"><div class="rpg-title"><i class="fa-solid fa-book-journal-whills"></i> 社交观察日记</div><div class="rpg-close" onclick="closeGame()"><i class="fa-solid fa-xmark"></i></div></div>
+                <div class="rpg-main-info"><span class="rpg-big-type" id="rpgType">ESTP</span><span class="rpg-lvl">LV <span id="rpgLvl">1</span></span></div>
             </div>
             <div class="rpg-body">
-                <div class="rpg-stats">
-                    <div class="stat-i"><span class="stat-n" id="rpgHp">25</span><span class="stat-l">心态(HP)</span></div>
-                    <div class="stat-i"><span class="stat-n" id="rpgExp">25</span><span class="stat-l">经验(EXP)</span></div>
-                </div>
+                <div class="rpg-stats"><div class="stat-i"><span class="stat-n" id="rpgHp">25</span><span class="stat-l">心态(HP)</span></div><div class="stat-i"><span class="stat-n" id="rpgExp">25</span><span class="stat-l">经验(EXP)</span></div></div>
                 <div style="font-size:12px;font-weight:bold;color:#999;margin-bottom:5px;">关系好感度图谱</div>
                 <div class="relation-grid" id="relGrid"></div>
-                <div class="rpg-log-area" id="consoleBox">
-                    <div class="log-entry"><span class="log-time">系统</span> 欢迎来到人际观测站。</div>
-                </div>
-                <div class="rpg-btn-row">
-                    <button class="rpg-btn btn-social" onclick="openTypeSelector()"><i class="fa-solid fa-user-group"></i> 社交互动</button>
-                    <button class="rpg-btn btn-med" onclick="rpgHeal()"><i class="fa-solid fa-spa"></i> 自我冥想</button>
-                </div>
+                <div class="rpg-log-area" id="consoleBox"><div class="log-entry"><span class="log-time">系统</span> 欢迎来到人际观测站。</div></div>
+                <div class="rpg-btn-row"><button class="rpg-btn btn-social" onclick="openTypeSelector()"><i class="fa-solid fa-user-group"></i> 社交互动</button><button class="rpg-btn btn-med" onclick="rpgHeal()"><i class="fa-solid fa-spa"></i> 自我冥想</button></div>
             </div>
             <div id="type-selector">
-                <div id="grid-ui">
-                    <div class="sel-header"><span>选择互动对象</span><i class="fa-solid fa-chevron-down" onclick="closeTypeSelector()"></i></div>
-                    <div class="type-grid-16">
-                        <button class="type-btn" onclick="showMoodUI('INFP')">INFP</button><button class="type-btn" onclick="showMoodUI('INFJ')">INFJ</button>
-                        <button class="type-btn" onclick="showMoodUI('ENFP')">ENFP</button><button class="type-btn" onclick="showMoodUI('ENFJ')">ENFJ</button>
-                        <button class="type-btn" onclick="showMoodUI('INTJ')">INTJ</button><button class="type-btn" onclick="showMoodUI('INTP')">INTP</button>
-                        <button class="type-btn" onclick="showMoodUI('ENTJ')">ENTJ</button><button class="type-btn" onclick="showMoodUI('ENTP')">ENTP</button>
-                        <button class="type-btn" onclick="showMoodUI('ISTP')">ISTP</button><button class="type-btn" onclick="showMoodUI('ISFP')">ISFP</button>
-                        <button class="type-btn" onclick="showMoodUI('ESTP')">ESTP</button><button class="type-btn" onclick="showMoodUI('ESFP')">ESFP</button>
-                        <button class="type-btn" onclick="showMoodUI('ISTJ')">ISTJ</button><button class="type-btn" onclick="showMoodUI('ISFJ')">ISFJ</button>
-                        <button class="type-btn" onclick="showMoodUI('ESTJ')">ESTJ</button><button class="type-btn" onclick="showMoodUI('ESFJ')">ESFJ</button>
-                    </div>
-                </div>
-                <div id="mood-ui">
-                    <div class="sel-header"><span id="mood-target-name">与 XXX 的相处体验?</span><i class="fa-solid fa-arrow-left" onclick="backToGrid()"></i></div>
-                    <div class="mood-grid">
-                        <button class="mood-btn m-good" onclick="confirmSocial(true)"><i class="fa-solid fa-face-smile-beam mood-icon"></i><span>相谈甚欢</span></button>
-                        <button class="mood-btn m-bad" onclick="confirmSocial(false)"><i class="fa-solid fa-face-tired mood-icon"></i><span>话不投机</span></button>
-                    </div>
-                </div>
+                <div id="grid-ui"><div class="sel-header"><span>选择互动对象</span><i class="fa-solid fa-chevron-down" onclick="closeTypeSelector()"></i></div><div class="type-grid-16"><button class="type-btn" onclick="showMoodUI('INFP')">INFP</button><button class="type-btn" onclick="showMoodUI('INFJ')">INFJ</button><button class="type-btn" onclick="showMoodUI('ENFP')">ENFP</button><button class="type-btn" onclick="showMoodUI('ENFJ')">ENFJ</button><button class="type-btn" onclick="showMoodUI('INTJ')">INTJ</button><button class="type-btn" onclick="showMoodUI('INTP')">INTP</button><button class="type-btn" onclick="showMoodUI('ENTJ')">ENTJ</button><button class="type-btn" onclick="showMoodUI('ENTP')">ENTP</button><button class="type-btn" onclick="showMoodUI('ISTP')">ISTP</button><button class="type-btn" onclick="showMoodUI('ISFP')">ISFP</button><button class="type-btn" onclick="showMoodUI('ESTP')">ESTP</button><button class="type-btn" onclick="showMoodUI('ESFP')">ESFP</button><button class="type-btn" onclick="showMoodUI('ISTJ')">ISTJ</button><button class="type-btn" onclick="showMoodUI('ISFJ')">ISFJ</button><button class="type-btn" onclick="showMoodUI('ESTJ')">ESTJ</button><button class="type-btn" onclick="showMoodUI('ESFJ')">ESFJ</button></div></div>
+                <div id="mood-ui"><div class="sel-header"><span id="mood-target-name">与 XXX 的相处体验?</span><i class="fa-solid fa-arrow-left" onclick="backToGrid()"></i></div><div class="mood-grid"><button class="mood-btn m-good" onclick="confirmSocial(true)"><i class="fa-solid fa-face-smile-beam mood-icon"></i><span>相谈甚欢</span></button><button class="mood-btn m-bad" onclick="confirmSocial(false)"><i class="fa-solid fa-face-tired mood-icon"></i><span>话不投机</span></button></div></div>
             </div>
         </div>
     </div>
@@ -410,6 +409,8 @@
     <script>
         // ================= 数据定义 =================
         let user={type:'',color:''}, score=0, wheelData=["行动","等待","求助","放弃"], wheelAngle=0, resetCounter=0;
+        let eraserCount = 0; // 新增：橡皮擦数量
+
         const typeColors = { 
             green: {main:'#00b894', bg:'#e6fcf5'}, purple: {main:'#9c88ff', bg:'#f3f0ff'}, 
             yellow: {main:'#feca57', bg:'#fffbf0'}, blue: {main:'#0984e3', bg:'#e7f5ff'} 
@@ -426,11 +427,12 @@
         let currentTarget = "";
         const COOLDOWN_TIME = 60 * 60 * 1000; 
 
-        // V28 更新：商品列表
+        // V30 更新：商品列表 (带情绪文案 + 橡皮擦)
         const shopItems = [
-            { id: 'skin_diary', name: '日记皮肤', desc: '解锁复古/暗黑/少女心主题', price: 200, icon: '📔' },
-            { id: 'skin_coupon', name: '兑换券皮肤', desc: '解锁烫金/全息/磨砂质感', price: 150, icon: '🎟️' },
-            { id: 'skin_char', name: '小人皮肤', desc: '解锁进化/异色/机甲形态', price: 500, icon: '👾' }
+            { id: 'eraser', name: '遗忘橡皮擦', desc: '想忘记一段回忆 可不是一件轻松的事情呢', price: 40, icon: '🧼' },
+            { id: 'skin_diary', name: '日记皮肤', desc: '记录下 那些闪闪发光的瞬间吧', price: 200, icon: '📔' },
+            { id: 'skin_coupon', name: '兑换券皮肤', desc: '承诺 是成年人最珍贵的礼物', price: 150, icon: '🎟️' },
+            { id: 'skin_char', name: '小人皮肤', desc: '换个心情 继续奔跑吧', price: 500, icon: '👾' }
         ];
 
         let currentTicketMode = 'diary';
@@ -440,12 +442,14 @@
         // ================= 初始化 =================
         window.onload = function() {
             if(localStorage.getItem('w16_user_v16')) { user = JSON.parse(localStorage.getItem('w16_user_v16')); loadMain(false); }
-            score = parseInt(localStorage.getItem('w16_score')||0); updateUI();
+            score = parseInt(localStorage.getItem('w16_score')||0); 
+            eraserCount = parseInt(localStorage.getItem('w16_erasers')||0); // 加载橡皮擦
+            updateUI();
             if(localStorage.getItem('w16_opts')) wheelData=JSON.parse(localStorage.getItem('w16_opts')); drawWheel();
             if(localStorage.getItem('w16_rpg')) rpgState = JSON.parse(localStorage.getItem('w16_rpg'));
             if(!rpgState.relationship) rpgState.relationship = {};
             initGrid();
-            startRunner(); // 启动小人动画
+            startRunner(); 
         };
 
         // ================= 基础逻辑 =================
@@ -459,9 +463,7 @@
                 document.getElementById('wType').innerText = user.type;
                 document.getElementById('wType').style.color = typeColors[user.color].main;
                 document.getElementById('wQuote').innerText = "“ " + d.res + " ”";
-                // 修复：强制设置恭喜按钮颜色
                 document.querySelector('.w-btn').style.backgroundColor = typeColors[user.color].main;
-                
                 document.getElementById('welcome-overlay').classList.remove('hidden');
                 btn.classList.remove('clicked');
             }, 150);
@@ -479,14 +481,13 @@
             document.documentElement.style.setProperty('--rpg-theme', colors.main);
         }
 
-        // V28: 小人动画逻辑
         let runnerInterval;
         function startRunner() {
             if(runnerInterval) clearInterval(runnerInterval);
             const box = document.querySelector('.bulb-box');
             runnerInterval = setInterval(() => {
                 box.classList.toggle('frame-2');
-            }, 200); // 200ms 切换一次，模拟奔跑
+            }, 200); 
         }
 
         function collectEnergy(e){
@@ -496,7 +497,7 @@
             const lastTime = parseInt(localStorage.getItem('w16_last_collect') || 0);
             const now = Date.now();
             const timeDiff = now - lastTime;
-            const b = document.querySelector('.runner-svg'); // 动画目标改为小人
+            const b = document.querySelector('.runner-svg'); 
             const qBox = document.getElementById('quoteArea');
             if(navigator.vibrate) navigator.vibrate(20);
 
@@ -513,11 +514,8 @@
             }
             score+=1; localStorage.setItem('w16_score',score); localStorage.setItem('w16_last_collect', now);
             updateUI(true);
-            
-            // 小人跳跃反馈
             b.style.transform = "translateY(-10px) scale(1.1)";
             setTimeout(()=> b.style.transform = "none", 150);
-            
             if(navigator.vibrate) navigator.vibrate(50);
         }
 
@@ -559,104 +557,22 @@
         }
 
         // ================= RPG =================
-        function openGame() { 
-            document.getElementById('game-layer').classList.remove('hidden'); 
-            document.getElementById('rpgType').innerText = user.type; 
-            initGrid(); updateRpgUI(); 
-        }
+        function openGame() { document.getElementById('game-layer').classList.remove('hidden'); document.getElementById('rpgType').innerText = user.type; initGrid(); updateRpgUI(); }
         function closeGame() { document.getElementById('game-layer').classList.add('hidden'); }
         function openTypeSelector() { document.getElementById('type-selector').classList.add('open'); backToGrid(); }
         function closeTypeSelector() { document.getElementById('type-selector').classList.remove('open'); }
-        function showMoodUI(target) {
-            currentTarget = target;
-            document.getElementById('grid-ui').style.display = 'none';
-            document.getElementById('mood-ui').style.display = 'block';
-            document.getElementById('mood-target-name').innerText = `与 ${target} 的互动体验?`;
-        }
-        function backToGrid() {
-            document.getElementById('grid-ui').style.display = 'block';
-            document.getElementById('mood-ui').style.display = 'none';
-        }
-
-        function confirmSocial(isGood) {
-            closeTypeSelector();
-            if(isGood) {
-                rpgState.exp += 5;
-                logToConsole(`与 ${currentTarget} 相谈甚欢，获得 5 经验`, 'log-green');
-            } else {
-                rpgState.hp = Math.max(0, rpgState.hp - 2);
-                logToConsole(`与 ${currentTarget} 话不投机，心态 -2`, 'log-red');
-            }
-            if(!rpgState.relationship[currentTarget]) rpgState.relationship[currentTarget] = 0;
-            rpgState.relationship[currentTarget] += 1;
-            updateRpgUI();
-            initGrid(); 
-        }
-
-        function rpgHeal() {
-            if(rpgState.hp >= rpgState.maxHp) { logToConsole("无需冥想，状态极佳。"); return; }
-            rpgState.hp = Math.min(rpgState.hp + 20, rpgState.maxHp);
-            logToConsole("进行了深度冥想，心态恢复。", "log-green");
-            updateRpgUI();
-        }
-
-        function updateRpgUI() {
-            document.getElementById('rpgHp').innerText = rpgState.hp;
-            document.getElementById('rpgExp').innerText = rpgState.exp;
-            document.getElementById('rpgLvl').innerText = rpgState.lvl;
-            localStorage.setItem('w16_rpg', JSON.stringify(rpgState));
-        }
-
-        function logToConsole(text, colorClass) {
-            const box = document.getElementById('consoleBox');
-            const p = document.createElement('div');
-            p.className = 'log-entry ' + (colorClass || '');
-            const time = new Date().toLocaleTimeString('en-US', {hour12:false, hour:"numeric", minute:"numeric"});
-            p.innerHTML = `<span class="log-time">${time}</span> ${text}`;
-            box.appendChild(p); box.scrollTop = box.scrollHeight;
-        }
-
-        function initGrid() {
-            const grid = document.getElementById('relGrid');
-            grid.innerHTML = '';
-            const groups = {
-                green: ["INFP","INFJ","ENFP","ENFJ"],
-                purple: ["INTJ","INTP","ENTJ","ENTP"],
-                yellow: ["ISTP","ISFP","ESTP","ESFP"],
-                blue: ["ISTJ","ISFJ","ESTJ","ESFJ"]
-            };
-            const allTypes = [...groups.green, ...groups.purple, ...groups.yellow, ...groups.blue];
-            allTypes.forEach(t => {
-                const val = rpgState.relationship[t] || 0;
-                const div = document.createElement('div');
-                div.className = 'rel-block';
-                if (groups.green.includes(t)) div.classList.add('rel-green');
-                else if (groups.purple.includes(t)) div.classList.add('rel-purple');
-                else if (groups.yellow.includes(t)) div.classList.add('rel-yellow');
-                else div.classList.add('rel-blue');
-                if(val > 0) div.classList.add('has-val');
-                const span = document.createElement('span');
-                span.innerText = t;
-                div.appendChild(span);
-                grid.appendChild(div);
-            });
-        }
+        function showMoodUI(target) { currentTarget = target; document.getElementById('grid-ui').style.display = 'none'; document.getElementById('mood-ui').style.display = 'block'; document.getElementById('mood-target-name').innerText = `与 ${target} 的互动体验?`; }
+        function backToGrid() { document.getElementById('grid-ui').style.display = 'block'; document.getElementById('mood-ui').style.display = 'none'; }
+        function confirmSocial(isGood) { closeTypeSelector(); if(isGood) { rpgState.exp += 5; logToConsole(`与 ${currentTarget} 相谈甚欢，获得 5 经验`, 'log-green'); } else { rpgState.hp = Math.max(0, rpgState.hp - 2); logToConsole(`与 ${currentTarget} 话不投机，心态 -2`, 'log-red'); } if(!rpgState.relationship[currentTarget]) rpgState.relationship[currentTarget] = 0; rpgState.relationship[currentTarget] += 1; updateRpgUI(); initGrid(); }
+        function rpgHeal() { if(rpgState.hp >= rpgState.maxHp) { logToConsole("无需冥想，状态极佳。"); return; } rpgState.hp = Math.min(rpgState.hp + 20, rpgState.maxHp); logToConsole("进行了深度冥想，心态恢复。", "log-green"); updateRpgUI(); }
+        function updateRpgUI() { document.getElementById('rpgHp').innerText = rpgState.hp; document.getElementById('rpgExp').innerText = rpgState.exp; document.getElementById('rpgLvl').innerText = rpgState.lvl; localStorage.setItem('w16_rpg', JSON.stringify(rpgState)); }
+        function logToConsole(text, colorClass) { const box = document.getElementById('consoleBox'); const p = document.createElement('div'); p.className = 'log-entry ' + (colorClass || ''); const time = new Date().toLocaleTimeString('en-US', {hour12:false, hour:"numeric", minute:"numeric"}); p.innerHTML = `<span class="log-time">${time}</span> ${text}`; box.appendChild(p); box.scrollTop = box.scrollHeight; }
+        function initGrid() { const grid = document.getElementById('relGrid'); grid.innerHTML = ''; const groups = { green: ["INFP","INFJ","ENFP","ENFJ"], purple: ["INTJ","INTP","ENTJ","ENTP"], yellow: ["ISTP","ISFP","ESTP","ESFP"], blue: ["ISTJ","ISFJ","ESTJ","ESFJ"] }; const allTypes = [...groups.green, ...groups.purple, ...groups.yellow, ...groups.blue]; allTypes.forEach(t => { const val = rpgState.relationship[t] || 0; const div = document.createElement('div'); div.className = 'rel-block'; if (groups.green.includes(t)) div.classList.add('rel-green'); else if (groups.purple.includes(t)) div.classList.add('rel-purple'); else if (groups.yellow.includes(t)) div.classList.add('rel-yellow'); else div.classList.add('rel-blue'); if(val > 0) div.classList.add('has-val'); const span = document.createElement('span'); span.innerText = t; div.appendChild(span); grid.appendChild(div); }); }
         
         let currentProfilePage = 1;
-        function openProfile() { 
-            const d = profileDB[user.color] || profileDB['green']; document.getElementById('profile-overlay').classList.remove('hidden'); 
-            document.getElementById('pcIcon').innerText = d.icon; document.getElementById('pcTitle').innerText = user.type; document.getElementById('pcHeader').style.background = typeColors[user.color].main; 
-            document.getElementById('pcTags').innerText = d.tags; document.getElementById('pcResonance').innerText = d.res; document.getElementById('pcJob').innerText = d.job; document.getElementById('pcMatch').innerText = d.match;
-            document.getElementById('pcHigh').innerText = d.high; document.getElementById('pcWeak').innerText = d.weak;
-            currentProfilePage = 1; updateProfileView();
-        }
+        function openProfile() { const d = profileDB[user.color] || profileDB['green']; document.getElementById('profile-overlay').classList.remove('hidden'); document.getElementById('pcIcon').innerText = d.icon; document.getElementById('pcTitle').innerText = user.type; document.getElementById('pcHeader').style.background = typeColors[user.color].main; document.getElementById('pcTags').innerText = d.tags; document.getElementById('pcResonance').innerText = d.res; document.getElementById('pcJob').innerText = d.job; document.getElementById('pcMatch').innerText = d.match; document.getElementById('pcHigh').innerText = d.high; document.getElementById('pcWeak').innerText = d.weak; currentProfilePage = 1; updateProfileView(); }
         function switchProfilePage() { currentProfilePage = currentProfilePage === 1 ? 2 : 1; updateProfileView(); }
-        function updateProfileView() {
-            const p1 = document.getElementById('pcPage1'); const p2 = document.getElementById('pcPage2');
-            const d1 = document.getElementById('dot1'); const d2 = document.getElementById('dot2');
-            if (currentProfilePage === 1) { p1.className = 'pc-page active'; p2.className = 'pc-page next'; d1.classList.add('active'); d2.classList.remove('active'); } 
-            else { p1.className = 'pc-page prev'; p2.className = 'pc-page active'; d1.classList.remove('active'); d2.classList.add('active'); }
-        }
+        function updateProfileView() { const p1 = document.getElementById('pcPage1'); const p2 = document.getElementById('pcPage2'); const d1 = document.getElementById('dot1'); const d2 = document.getElementById('dot2'); if (currentProfilePage === 1) { p1.className = 'pc-page active'; p2.className = 'pc-page next'; d1.classList.add('active'); d2.classList.remove('active'); } else { p1.className = 'pc-page prev'; p2.className = 'pc-page active'; d1.classList.remove('active'); d2.classList.add('active'); } }
         function closeProfile(e) { if(!e || e.target.id === 'profile-overlay' || e.target.classList.contains('close-pc')) document.getElementById('profile-overlay').classList.add('hidden'); }
         function toggleWheel(s){ const e=document.getElementById('turntable-overlay'); s?e.classList.remove('hidden'):e.classList.add('hidden'); }
         function drawWheel(){ const c=document.getElementById('wheelCanvas'); c.innerHTML=''; const l=wheelData.length, s=360/l, cl=['#e17055','#0984e3','#00b894','#6c5ce7','#fdcb6e','#d63031','#00cec9','#2d3436']; let bg='conic-gradient('; for(let i=0;i<l;i++) bg+=`${cl[i%8]} ${i*s}deg ${(i+1)*s}deg${i<l-1?',':''}`; c.style.background=bg+')'; for(let i=0;i<l;i++){ const t=document.createElement('div'); t.style.position='absolute'; t.style.top='50%'; t.style.left='50%'; t.style.width='110px'; t.style.textAlign='right'; t.innerText=wheelData[i]; t.style.color='#fff'; t.style.fontSize='12px'; t.style.fontWeight='bold'; t.style.transform=`rotate(${(i*s)+(s/2)+180}deg) translateY(-3px)`; t.style.transformOrigin='0 0'; c.appendChild(t); } }
@@ -679,7 +595,7 @@
                         <div style="font-size:30px;">${item.icon}</div>
                         <div>
                             <div style="font-weight:bold;color:#333;">${item.name}</div>
-                            <div style="font-size:12px;color:#999;">${item.desc}</div>
+                            <div class="shop-item-desc">${item.desc}</div>
                         </div>
                     </div>
                     <button onclick="buyItem('${item.id}')" style="background:${score>=item.price?'#333':'#ccc'};color:#fff;border:none;padding:8px 15px;border-radius:20px;font-weight:bold;cursor:pointer;">
@@ -694,41 +610,38 @@
         function buyItem(id) {
             const item = shopItems.find(i => i.id === id);
             if(score < item.price) { alert("能量不足！"); return; }
-            if(!confirm(`确认消耗 ${item.price} 能量解锁 [${item.name}] 吗？`)) return;
+            if(!confirm(`确认消耗 ${item.price} 能量购买 [${item.name}] 吗？`)) return;
+            
             score -= item.price;
             localStorage.setItem('w16_score', score);
+            
+            // 橡皮擦逻辑
+            if(id === 'eraser') {
+                eraserCount++;
+                localStorage.setItem('w16_erasers', eraserCount);
+                alert("✨ 获得了一块遗忘橡皮擦！\n在日记中可以看到删除按钮了。");
+            } else {
+                alert(`✨ 已解锁 [${item.name}]！\n(请在设置中查看或截图保存)`);
+            }
+            
             updateUI();
             openShop(); 
-            // 简单的解锁反馈
-            alert(`✨ 已解锁 [${item.name}]！\n(请在设置中查看或截图保存)`);
         }
 
-        // --- V28 修复版日记逻辑 ---
+        // --- V30 疯狂票根 & 橡皮擦逻辑 ---
         function openDiary() {
             document.getElementById('diary-overlay').classList.remove('hidden');
             renderTickets('all');
         }
-        // 新增关闭函数
-        function closeDiary() {
-            document.getElementById('diary-overlay').classList.add('hidden');
-        }
+        function closeDiary() { document.getElementById('diary-overlay').classList.add('hidden'); }
         
         function switchDiaryMode(mode) {
             currentTicketMode = mode;
             document.getElementById('btn-diary-mode').classList.toggle('active', mode==='diary');
             document.getElementById('btn-coupon-mode').classList.toggle('active', mode==='coupon');
         }
-        
-        function selMood(el, val) {
-            document.querySelectorAll('#mood-sel .is-btn').forEach(b=>b.classList.remove('sel'));
-            el.classList.add('sel');
-            currentMood = val;
-        }
-        function selMbti(el, val) {
-            document.querySelectorAll('#mbti-sel .is-btn').forEach(b=>b.classList.remove('sel'));
-            el.classList.add('sel');
-            currentMbtiIcon = val;
-        }
+        function selMood(el, val) { document.querySelectorAll('#mood-sel .is-btn').forEach(b=>b.classList.remove('sel')); el.classList.add('sel'); currentMood = val; }
+        function selMbti(el, val) { document.querySelectorAll('#mbti-sel .is-btn').forEach(b=>b.classList.remove('sel')); el.classList.add('sel'); currentMbtiIcon = val; }
         
         function createTicket() {
             const txt = document.getElementById('ticket-content').value;
@@ -737,7 +650,7 @@
             const newTicket = {
                 id: Date.now(),
                 type: currentTicketMode,
-                date: new Date().toLocaleDateString(),
+                date: new Date().toLocaleDateString('en-US').replace(/\//g, '.'),
                 content: txt,
                 mood: currentMood,
                 mbti: currentMbtiIcon
@@ -753,31 +666,57 @@
             alert("已保存！能量 +2");
         }
         
+        // 删除日记逻辑
+        function deleteTicket(id) {
+            if(eraserCount <= 0) { alert("没有橡皮擦了..."); return; }
+            if(confirm("想忘记一段回忆 可不是一件轻松的事情呢。\n确定要消耗 1 块橡皮擦删除这条记录吗？")) {
+                let tickets = JSON.parse(localStorage.getItem('w16_tickets') || "[]");
+                tickets = tickets.filter(t => t.id !== id);
+                localStorage.setItem('w16_tickets', JSON.stringify(tickets));
+                
+                eraserCount--;
+                localStorage.setItem('w16_erasers', eraserCount);
+                
+                renderTickets('all');
+                alert("回忆已擦除。");
+            }
+        }
+
         function renderTickets(filter) {
             const list = document.getElementById('ticket-list');
             const tickets = JSON.parse(localStorage.getItem('w16_tickets') || "[]");
             list.innerHTML = "";
             
             if(tickets.length === 0) {
-                list.innerHTML = `<div style="text-align:center;color:#ccc;margin-top:20px;">暂无记录</div>`;
+                list.innerHTML = `<div style="text-align:center;color:#ccc;margin-top:20px;font-family:'Courier New'">NO RECORDS</div>`;
                 return;
             }
             
             tickets.forEach(t => {
                 const div = document.createElement('div');
-                div.className = 'ticket-card';
-                const typeLabel = t.type === 'diary' ? '心情日记' : '兑换承诺';
+                div.className = 'ticket-stub'; 
                 
+                const typeLabel = t.type === 'diary' ? 'ADMIT ONE' : 'COUPON';
+                
+                // 橡皮擦按钮逻辑
+                let deleteBtn = '';
+                if(eraserCount > 0) {
+                    deleteBtn = `<div class="stub-delete" onclick="deleteTicket(${t.id})">×</div>`;
+                }
+
                 div.innerHTML = `
-                    <div class="ticket-header">
-                        <span class="t-type">${typeLabel}</span>
-                        <span class="t-date">${t.date}</span>
+                    ${deleteBtn}
+                    <div class="stub-header">
+                        <span>${t.date}</span>
                     </div>
-                    <div class="t-content">${t.content}</div>
-                    <div class="t-footer">
-                        <span class="t-icon">${t.mood}</span>
-                        <span style="color:#eee;">|</span>
-                        <span class="t-icon">${t.mbti}</span>
+                    <div class="stub-body">
+                        ${t.content}
+                    </div>
+                    <div class="stub-footer">
+                        <div class="stub-meta">
+                            <span>${t.mood}</span> | <span>${t.mbti}</span> | <span>${typeLabel}</span>
+                        </div>
+                        <div class="barcode"></div>
                     </div>
                 `;
                 list.appendChild(div); 
@@ -785,93 +724,21 @@
         }
 
         // --- 代码输入 (Key UI) ---
-        function openKeyUI() {
-            document.getElementById('key-overlay').classList.remove('hidden');
-            document.getElementById('keyCodeInput').value = "";
-            document.getElementById('keyCodeInput').focus();
-        }
-        function closeKeyUI() {
-            document.getElementById('key-overlay').classList.add('hidden');
-        }
-
+        function openKeyUI() { document.getElementById('key-overlay').classList.remove('hidden'); document.getElementById('keyCodeInput').value = ""; document.getElementById('keyCodeInput').focus(); }
+        function closeKeyUI() { document.getElementById('key-overlay').classList.add('hidden'); }
         function submitKey() {
             const code = document.getElementById('keyCodeInput').value.trim();
             if(!code) return;
             closeKeyUI();
-
-            if(code === "V24-VIP-GIFT") { 
-                score += 500; rpgState.exp += 50; updateRpgUI(); updateUI(); 
-                alert("✨ 获得 VIP 能量包！(能量+500)"); 
-                return; 
-            }
-            if(code.startsWith("W16-")) {
-                 try {
-                    const raw = code.substring(4);
-                    const jsonStr = decodeURIComponent(atob(raw));
-                    const data = JSON.parse(jsonStr);
-                    showVisitorCard(data); 
-                } catch(e) { alert("无效的神秘代码"); }
-                return;
-            }
-            if(code.startsWith("DATA-")) {
-                try {
-                    const dataStr = decodeURIComponent(atob(code.substring(5)));
-                    const allData = JSON.parse(dataStr);
-                    if(confirm("确定要导入这份存档吗？当前数据将被覆盖！")) {
-                        localStorage.setItem('w16_user_v16', JSON.stringify(allData.user));
-                        localStorage.setItem('w16_score', allData.score);
-                        localStorage.setItem('w16_rpg', JSON.stringify(allData.rpg));
-                        if(allData.tickets) localStorage.setItem('w16_tickets', JSON.stringify(allData.tickets));
-                        alert("数据已导入，系统将重启。");
-                        location.reload();
-                    }
-                } catch(e) { alert("数据损坏，无法导入"); }
-                return;
-            }
+            if(code === "V24-VIP-GIFT") { score += 500; rpgState.exp += 50; updateRpgUI(); updateUI(); alert("✨ 获得 VIP 能量包！(能量+500)"); return; }
+            if(code.startsWith("W16-")) { try { const raw = code.substring(4); const jsonStr = decodeURIComponent(atob(raw)); const data = JSON.parse(jsonStr); showVisitorCard(data); } catch(e) { alert("无效的神秘代码"); } return; }
+            if(code.startsWith("DATA-")) { try { const dataStr = decodeURIComponent(atob(code.substring(5))); const allData = JSON.parse(dataStr); if(confirm("确定要导入这份存档吗？当前数据将被覆盖！")) { localStorage.setItem('w16_user_v16', JSON.stringify(allData.user)); localStorage.setItem('w16_score', allData.score); localStorage.setItem('w16_rpg', JSON.stringify(allData.rpg)); if(allData.tickets) localStorage.setItem('w16_tickets', JSON.stringify(allData.tickets)); alert("数据已导入，系统将重启。"); location.reload(); } } catch(e) { alert("数据损坏，无法导入"); } return; }
             alert("🔑 钥匙转动了，但似乎什么也没发生...");
         }
-
-        function getBestRelation() {
-            let best = "暂无"; let maxVal = 0;
-            for (const [key, val] of Object.entries(rpgState.relationship)) { if (val > maxVal) { maxVal = val; best = key; } }
-            return best;
-        }
-        function exportMemoryCode() {
-            const data = { t: user.type, l: rpgState.lvl, h: rpgState.hp, b: getBestRelation(), s: score, d: new Date().toLocaleDateString() };
-            const jsonStr = JSON.stringify(data);
-            const code = "W16-" + btoa(encodeURIComponent(jsonStr));
-            navigator.clipboard.writeText(code).then(() => { alert("记忆代码已复制！\n" + code); }).catch(() => { prompt("请复制:", code); });
-        }
-        function showVisitorCard(d) {
-            const overlay = document.createElement('div');
-            overlay.style = "position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:9999;display:flex;justify-content:center;align-items:center;animation:fadeIn 0.3s;";
-            overlay.innerHTML = `
-                <div style="background:#fff;width:80%;max-width:320px;border-radius:20px;padding:25px;text-align:center;position:relative;box-shadow:0 0 50px rgba(255,255,255,0.2);">
-                    <div style="position:absolute;top:-20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:5px 15px;border-radius:15px;font-size:12px;font-weight:bold;">观测报告</div>
-                    <h2 style="margin:20px 0 10px;color:#333;">${d.t} 的精神切片</h2>
-                    <div style="font-size:13px;color:#888;margin-bottom:20px;">记录于 ${d.d}</div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
-                        <div style="background:#f5f6fa;padding:10px;border-radius:10px;"><div style="font-size:12px;color:#999;">当前等级</div><div style="font-size:18px;font-weight:900;color:#2d3436;">LV.${d.l}</div></div>
-                        <div style="background:#f5f6fa;padding:10px;border-radius:10px;"><div style="font-size:12px;color:#999;">剩余心态</div><div style="font-size:18px;font-weight:900;color:${d.h<20?'#d63031':'#00b894'};">${d.h}</div></div>
-                    </div>
-                    <div style="background:#fffbf0;border:1px solid #ffeaa7;padding:15px;border-radius:12px;margin-bottom:20px;text-align:left;">
-                        <div style="font-size:12px;color:#b7791f;font-weight:bold;margin-bottom:5px;">🤝 灵魂密友</div><div style="font-size:14px;color:#333;">Ta 似乎与 <span style="font-weight:900;font-size:16px;">${d.b}</span> 相处得非常融洽。</div>
-                    </div>
-                    <button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:12px;background:#333;color:#fff;border:none;border-radius:10px;font-weight:bold;cursor:pointer;">关闭报告</button>
-                </div>
-            `;
-            document.body.appendChild(overlay);
-        }
-        function exportSaveData() {
-            const allData = { 
-                user: JSON.parse(localStorage.getItem('w16_user_v16')||'{}'), 
-                score: localStorage.getItem('w16_score')||0, 
-                rpg: JSON.parse(localStorage.getItem('w16_rpg')||'{}'), 
-                tickets: JSON.parse(localStorage.getItem('w16_tickets')||'[]') 
-            };
-            const code = "DATA-" + btoa(encodeURIComponent(JSON.stringify(allData)));
-            navigator.clipboard.writeText(code).then(()=>alert("存档提取成功！\n请在新版本中点击'钥匙'并粘贴此代码。")).catch(()=>prompt("复制存档码:",code));
-        }
+        function getBestRelation() { let best = "暂无"; let maxVal = 0; for (const [key, val] of Object.entries(rpgState.relationship)) { if (val > maxVal) { maxVal = val; best = key; } } return best; }
+        function exportMemoryCode() { const data = { t: user.type, l: rpgState.lvl, h: rpgState.hp, b: getBestRelation(), s: score, d: new Date().toLocaleDateString() }; const jsonStr = JSON.stringify(data); const code = "W16-" + btoa(encodeURIComponent(jsonStr)); navigator.clipboard.writeText(code).then(() => { alert("记忆代码已复制！\n" + code); }).catch(() => { prompt("请复制:", code); }); }
+        function showVisitorCard(d) { const overlay = document.createElement('div'); overlay.style = "position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:9999;display:flex;justify-content:center;align-items:center;animation:fadeIn 0.3s;"; overlay.innerHTML = ` <div style="background:#fff;width:80%;max-width:320px;border-radius:20px;padding:25px;text-align:center;position:relative;box-shadow:0 0 50px rgba(255,255,255,0.2);"> <div style="position:absolute;top:-20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:5px 15px;border-radius:15px;font-size:12px;font-weight:bold;">观测报告</div> <h2 style="margin:20px 0 10px;color:#333;">${d.t} 的精神切片</h2> <div style="font-size:13px;color:#888;margin-bottom:20px;">记录于 ${d.d}</div> <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;"> <div style="background:#f5f6fa;padding:10px;border-radius:10px;"><div style="font-size:12px;color:#999;">当前等级</div><div style="font-size:18px;font-weight:900;color:#2d3436;">LV.${d.l}</div></div> <div style="background:#f5f6fa;padding:10px;border-radius:10px;"><div style="font-size:12px;color:#999;">剩余心态</div><div style="font-size:18px;font-weight:900;color:${d.h<20?'#d63031':'#00b894'};">${d.h}</div></div> </div> <div style="background:#fffbf0;border:1px solid #ffeaa7;padding:15px;border-radius:12px;margin-bottom:20px;text-align:left;"> <div style="font-size:12px;color:#b7791f;font-weight:bold;margin-bottom:5px;">🤝 灵魂密友</div><div style="font-size:14px;color:#333;">Ta 似乎与 <span style="font-weight:900;font-size:16px;">${d.b}</span> 相处得非常融洽。</div> </div> <button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:12px;background:#333;color:#fff;border:none;border-radius:10px;font-weight:bold;cursor:pointer;">关闭报告</button> </div> `; document.body.appendChild(overlay); }
+        function exportSaveData() { const allData = { user: JSON.parse(localStorage.getItem('w16_user_v16')||'{}'), score: localStorage.getItem('w16_score')||0, rpg: JSON.parse(localStorage.getItem('w16_rpg')||'{}'), tickets: JSON.parse(localStorage.getItem('w16_tickets')||'[]') }; const code = "DATA-" + btoa(encodeURIComponent(JSON.stringify(allData))); navigator.clipboard.writeText(code).then(()=>alert("存档提取成功！\n请在新版本中点击'钥匙'并粘贴此代码。")).catch(()=>prompt("复制存档码:",code)); }
     </script>
 </body>
 </html>
