@@ -18,7 +18,7 @@
             --yellow: #feca57; --yellow-bg: #fffbf0; 
             --blue: #0984e3; --blue-bg: #e7f5ff;
             --active-color: #00b894; --active-bg: #e6fcf5; --rpg-theme: #00b894; 
-            --pixel-font: "Courier New", Courier, monospace; /* 像素感字体 */
+            --pixel-font: "Courier New", Courier, monospace; 
         }
         body { margin: 0; padding: 0; height: 100vh; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow: hidden; background: #fff; -webkit-user-select: none; user-select: none; }
         .hidden { display: none !important; }
@@ -48,14 +48,42 @@
         .heal-card { width: 85%; max-width: 360px; height: 500px; background: rgba(255,255,255,0.85); backdrop-filter: blur(30px); border-radius: 30px; padding: 25px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; border: 1px solid rgba(255,255,255,0.8); position: relative; overflow: visible; }
         .card-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; position: relative; z-index: 2; }
         
-        .bulb-box { height: 140px; width: 140px; display: flex; justify-content: center; align-items: center; margin: 10px 0; position: relative; cursor: pointer; }
-        .orbit-star { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px dashed rgba(0,0,0,0.05); animation: spinOrbit 10s linear infinite; pointer-events: none; }
-        .orbit-star::before { content: ''; position: absolute; top: -4px; left: 50%; width: 8px; height: 8px; background: #fdcb6e; border-radius: 50%; transform: translateX(-50%); box-shadow: 0 0 10px #fdcb6e; }
+        /* ================= V31 核心特效：聚能光环 ================= */
+        .bulb-box { 
+            height: 140px; width: 140px; 
+            display: flex; justify-content: center; align-items: center; 
+            margin: 10px 0; position: relative; cursor: pointer;
+            border-radius: 50%;
+            /* 基础发光底色，跟随人格颜色 */
+            background: radial-gradient(circle, var(--active-bg) 0%, transparent 70%);
+        }
         
+        /* 向内收缩的波纹 */
+        .ripple-ring {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%; height: 100%;
+            border: 2px solid var(--active-color); /* 颜色跟随 */
+            border-radius: 50%;
+            opacity: 0;
+            pointer-events: none;
+            /* 聚能动画：从大变小，从无到有 */
+            animation: suckRipple 2s infinite linear;
+        }
+        .ripple-ring:nth-child(1) { animation-delay: 0s; }
+        .ripple-ring:nth-child(2) { animation-delay: 1s; }
+
+        @keyframes suckRipple {
+            0% { width: 140%; height: 140%; opacity: 0; border-width: 1px; }
+            50% { opacity: 0.3; }
+            100% { width: 20%; height: 20%; opacity: 0; border-width: 4px; }
+        }
+
         /* 像素小人 SVG */
-        .runner-svg { width: 80px; height: 80px; z-index: 10; transition: transform 0.1s; filter: drop-shadow(4px 4px 0 rgba(0,0,0,0.1)); }
+        .runner-svg { width: 80px; height: 80px; z-index: 10; transition: transform 0.1s; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1)); }
         .runner-svg:active { transform: scale(0.9); }
-        .runner-svg path { fill: var(--active-color); } 
+        .runner-svg path { fill: var(--active-color); } /* 小人变色 */
         .run-frame-1 { display: block; } .run-frame-2 { display: none; }
         .bulb-box.frame-2 .run-frame-1 { display: none; } .bulb-box.frame-2 .run-frame-2 { display: block; }
 
@@ -152,9 +180,59 @@
         /* 悬浮关闭按钮 */
         .floating-close { position: absolute; right: 20px; top: 20px; z-index: 100; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.9); display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; }
 
-        /* ================= V30: 疯狂票根样式 & 商店 ================= */
+        /* ================= V31: 修复版日记UI ================= */
         
-        /* 1. 票根容器 (日记 & 兑换券统一) */
+        /* 1. 输入区域：回归 V29 纯净圆角卡片 */
+        .input-area { 
+            background: #fff; 
+            padding: 20px; 
+            border-radius: 20px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            border: 1px solid #f0f0f0;
+        }
+        
+        .switch-row { display: flex; gap: 10px; margin-bottom: 15px; }
+        .switch-btn { 
+            flex: 1; padding: 10px; border: none; 
+            background: #f0f2f5; border-radius: 10px; 
+            font-weight: 900; color: #999; cursor: pointer; transition: 0.2s; 
+        }
+        .switch-btn.active { 
+            background: var(--active-color); color: #fff; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
+        }
+        
+        .text-in { 
+            width: 100%; border: none; 
+            background: #f9f9f9; border-radius: 12px; 
+            padding: 15px; box-sizing: border-box; 
+            font-size: 14px; min-height: 80px; resize: none; 
+            margin-bottom: 15px; outline: none; color: #333;
+            font-family: -apple-system, sans-serif; /* 恢复现代字体 */
+        }
+        
+        .icon-selector { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
+        .is-btn { 
+            width: 36px; height: 36px; border-radius: 50%; 
+            background: #f0f2f5; display: flex; justify-content: center; 
+            align-items: center; font-size: 18px; flex-shrink: 0; 
+            cursor: pointer; transition: 0.2s; border: none;
+        }
+        .is-btn.sel { 
+            background: var(--active-color); 
+            border: 2px solid #fff; 
+            box-shadow: 0 0 0 2px var(--active-color); 
+        }
+        
+        .s-btn { 
+            width: 100%; padding: 14px; 
+            background: #2d3436; color: #fff; 
+            border: none; border-radius: 12px; 
+            margin-top: 10px; font-weight: bold; cursor: pointer;
+        }
+
+        /* 2. 票根容器 (展示用) */
         .ticket-stub {
             background: #fff;
             position: relative;
@@ -163,20 +241,18 @@
             font-family: var(--pixel-font);
             display: flex;
             flex-direction: column;
-            /* 左右两侧的锯齿圆孔 */
             background-image: 
                 radial-gradient(circle at 0 10px, transparent 6px, #fff 7px),
                 radial-gradient(circle at 100% 10px, transparent 6px, #fff 7px);
-            background-size: 100% 20px; /* 垂直重复锯齿 */
+            background-size: 100% 20px;
             background-position: 0 0, 0 0;
             background-repeat: repeat-y;
-            padding: 10px 18px; /* 避开锯齿区域 */
+            padding: 10px 18px;
             border-radius: 4px;
         }
 
-        /* 票根头部 */
         .stub-header {
-            background: var(--active-color); /* 主题色背景 */
+            background: var(--active-color);
             color: #fff;
             padding: 10px 15px;
             text-align: center;
@@ -187,68 +263,16 @@
             margin-bottom: 10px;
             position: relative;
         }
-        .stub-header::after {
-            content: "";
-            display: block;
-            width: 100%;
-            height: 2px;
-            background: rgba(255,255,255,0.3);
-            margin-top: 5px;
-        }
+        .stub-header::after { content: ""; display: block; width: 100%; height: 2px; background: rgba(255,255,255,0.3); margin-top: 5px; }
 
-        /* 票根主体 */
-        .stub-body {
-            padding: 10px 5px;
-            font-size: 14px;
-            line-height: 1.6;
-            color: #333;
-            font-weight: bold;
-            text-align: justify;
-            min-height: 60px;
-        }
+        .stub-body { padding: 10px 5px; font-size: 14px; line-height: 1.6; color: #333; font-weight: bold; text-align: justify; min-height: 60px; }
 
-        /* 票根底部 (条形码) */
-        .stub-footer {
-            border-top: 2px dashed #ccc;
-            padding-top: 10px;
-            margin-top: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .stub-meta {
-            font-size: 10px;
-            color: #999;
-            font-weight: bold;
-        }
-        .barcode {
-            height: 25px;
-            width: 100px;
-            background: repeating-linear-gradient(
-                90deg,
-                #333 0, #333 2px,
-                transparent 2px, transparent 4px,
-                #333 4px, #333 6px
-            );
-        }
+        .stub-footer { border-top: 2px dashed #ccc; padding-top: 10px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .stub-meta { font-size: 10px; color: #999; font-weight: bold; }
+        .barcode { height: 25px; width: 100px; background: repeating-linear-gradient(90deg, #333 0, #333 2px, transparent 2px, transparent 4px, #333 4px, #333 6px); }
         
-        /* 遗忘橡皮擦删除按钮 */
-        .stub-delete {
-            position: absolute;
-            top: -10px; right: -10px;
-            width: 30px; height: 30px;
-            background: #ff4757;
-            color: #fff;
-            border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            font-weight: bold;
-            z-index: 10;
-            animation: popUp 0.3s;
-        }
+        .stub-delete { position: absolute; top: -10px; right: -10px; width: 30px; height: 30px; background: #ff4757; color: #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); font-weight: bold; z-index: 10; animation: popUp 0.3s; }
 
-        /* 商店商品描述样式 */
         .shop-item-desc { font-size: 10px; color: #999; margin-top: 4px; font-style: italic; }
 
     </style>
@@ -264,7 +288,7 @@
             <div class="cat-row c-yellow"><div class="cat-label">自由探险 (SP)</div><div class="btn-grid"><button class="detail-btn" onclick="saveUser('ISTP','yellow', this)">ISTP</button><button class="detail-btn" onclick="saveUser('ISFP','yellow', this)">ISFP</button><button class="detail-btn" onclick="saveUser('ESTP','yellow', this)">ESTP</button><button class="detail-btn" onclick="saveUser('ESFP','yellow', this)">ESFP</button></div></div>
             <div class="cat-row c-blue"><div class="cat-label">忠诚守护 (SJ)</div><div class="btn-grid"><button class="detail-btn" onclick="saveUser('ISTJ','blue', this)">ISTJ</button><button class="detail-btn" onclick="saveUser('ISFJ','blue', this)">ISFJ</button><button class="detail-btn" onclick="saveUser('ESTJ','blue', this)">ESTJ</button><button class="detail-btn" onclick="saveUser('ESFJ','blue', this)">ESFJ</button></div></div>
         </div>
-        <div class="footer-logo-p1">王老十六 © WANG16 MBTI V30</div>
+        <div class="footer-logo-p1">王老十六 © WANG16 MBTI V31</div>
     </div>
 
     <div id="welcome-overlay" class="hidden">
@@ -291,11 +315,14 @@
                 <div class="side-btn" onclick="openDiary()"><i class="fa-solid fa-pen-nib" style="color:#2ecc71"></i></div>
                 <div class="side-btn" onclick="openKeyUI()"><i class="fa-solid fa-key" style="color:#333"></i></div>
             </div>
+            
             <div class="bulb-box" onmousedown="collectEnergy(event)" ontouchstart="collectEnergy(event)">
-                <div class="orbit-star"></div>
+                <div class="ripple-ring"></div>
+                <div class="ripple-ring"></div>
                 <svg class="runner-svg run-frame-1" viewBox="0 0 16 16"><path d="M6,1 h4 v4 h-4 z" /><path d="M5,5 h6 v5 h-6 z" /><path d="M5,10 h2 v5 h-2 z" /><path d="M9,10 h2 v3 h2 v-2 h-2 z" /><path d="M3,6 h2 v3 h-2 z" /><path d="M11,6 h2 v3 h-2 z" /></svg>
                 <svg class="runner-svg run-frame-2" viewBox="0 0 16 16"><path d="M6,2 h4 v4 h-4 z" /><path d="M5,6 h6 v5 h-6 z" /><path d="M4,11 h3 v-1 h-1 v-2 h-2 z" /><path d="M9,11 h2 v5 h-2 z" /><path d="M11,7 h3 v2 h-3 z" /><path d="M3,7 h2 v2 h-2 z" /></svg>
             </div>
+            
             <div id="userId" class="user-badge"><span id="typeText" class="type-highlight"></span> 专属空间</div>
             <div class="quote-box" id="quoteArea"><div class="emoji" id="emojiDisplay">✨</div><div class="quote-txt" id="textDisplay">...</div></div>
             <button class="btn-collect" id="collectBtn" onmousedown="collectEnergy(event)" ontouchstart="collectEnergy(event)">收集能量 (+1)</button>
@@ -409,7 +436,7 @@
     <script>
         // ================= 数据定义 =================
         let user={type:'',color:''}, score=0, wheelData=["行动","等待","求助","放弃"], wheelAngle=0, resetCounter=0;
-        let eraserCount = 0; // 新增：橡皮擦数量
+        let eraserCount = 0; 
 
         const typeColors = { 
             green: {main:'#00b894', bg:'#e6fcf5'}, purple: {main:'#9c88ff', bg:'#f3f0ff'}, 
@@ -427,7 +454,7 @@
         let currentTarget = "";
         const COOLDOWN_TIME = 60 * 60 * 1000; 
 
-        // V30 更新：商品列表 (带情绪文案 + 橡皮擦)
+        // 商品列表
         const shopItems = [
             { id: 'eraser', name: '遗忘橡皮擦', desc: '想忘记一段回忆 可不是一件轻松的事情呢', price: 40, icon: '🧼' },
             { id: 'skin_diary', name: '日记皮肤', desc: '记录下 那些闪闪发光的瞬间吧', price: 200, icon: '📔' },
@@ -443,7 +470,7 @@
         window.onload = function() {
             if(localStorage.getItem('w16_user_v16')) { user = JSON.parse(localStorage.getItem('w16_user_v16')); loadMain(false); }
             score = parseInt(localStorage.getItem('w16_score')||0); 
-            eraserCount = parseInt(localStorage.getItem('w16_erasers')||0); // 加载橡皮擦
+            eraserCount = parseInt(localStorage.getItem('w16_erasers')||0); 
             updateUI();
             if(localStorage.getItem('w16_opts')) wheelData=JSON.parse(localStorage.getItem('w16_opts')); drawWheel();
             if(localStorage.getItem('w16_rpg')) rpgState = JSON.parse(localStorage.getItem('w16_rpg'));
@@ -615,7 +642,6 @@
             score -= item.price;
             localStorage.setItem('w16_score', score);
             
-            // 橡皮擦逻辑
             if(id === 'eraser') {
                 eraserCount++;
                 localStorage.setItem('w16_erasers', eraserCount);
@@ -628,7 +654,7 @@
             openShop(); 
         }
 
-        // --- V30 疯狂票根 & 橡皮擦逻辑 ---
+        // --- V31 修复版日记逻辑 ---
         function openDiary() {
             document.getElementById('diary-overlay').classList.remove('hidden');
             renderTickets('all');
@@ -666,7 +692,6 @@
             alert("已保存！能量 +2");
         }
         
-        // 删除日记逻辑
         function deleteTicket(id) {
             if(eraserCount <= 0) { alert("没有橡皮擦了..."); return; }
             if(confirm("想忘记一段回忆 可不是一件轻松的事情呢。\n确定要消耗 1 块橡皮擦删除这条记录吗？")) {
@@ -698,7 +723,6 @@
                 
                 const typeLabel = t.type === 'diary' ? 'ADMIT ONE' : 'COUPON';
                 
-                // 橡皮擦按钮逻辑
                 let deleteBtn = '';
                 if(eraserCount > 0) {
                     deleteBtn = `<div class="stub-delete" onclick="deleteTicket(${t.id})">×</div>`;
