@@ -19,8 +19,7 @@
             --blue: #0984e3; --blue-bg: #e7f5ff;
             --active-color: #00b894; --active-bg: #e6fcf5; --rpg-theme: #00b894; 
             --pixel-font: "Courier New", Courier, monospace; 
-            --paper-color: #fdf6e3; /* 泛黄旧纸张色 */
-            --ticket-color: #ff7675; /* 动物城罚单橙红 */
+            --paper-color: #fdf6e3; 
         }
         body { margin: 0; padding: 0; height: 100vh; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow: hidden; background: #fff; -webkit-user-select: none; user-select: none; }
         .hidden { display: none !important; }
@@ -47,7 +46,7 @@
         /* P2: 主页 */
         #main-page { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden; }
         
-        /* V33 核心：柔光呼吸背景 (无电报线，纯光晕) */
+        /* V34 核心：柔光呼吸背景 (无硬线条) */
         .converge-bg {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 100%; height: 100%; z-index: 0; pointer-events: none;
@@ -59,7 +58,7 @@
             opacity: 0;
             border-radius: 50%;
             animation: breatheGlow 5s infinite ease-in-out;
-            filter: blur(40px); /* 强力模糊，营造光雾感 */
+            filter: blur(40px);
         }
         .soft-glow:nth-child(2) { animation-delay: 2.5s; width: 120vmax; height: 120vmax; }
 
@@ -75,41 +74,36 @@
         .heal-card { width: 85%; max-width: 360px; height: 500px; background: rgba(255,255,255,0.85); backdrop-filter: blur(30px); border-radius: 30px; padding: 25px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; border: 1px solid rgba(255,255,255,0.8); position: relative; overflow: visible; z-index: 10; }
         .card-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; position: relative; z-index: 2; }
         
-        /* V33 新版小人容器 (带风景) */
+        /* V34: 小人容器 (无地面) */
         .bulb-box { 
             height: 140px; width: 100%; 
             display: flex; justify-content: center; align-items: center; 
             margin: 10px 0; position: relative; cursor: pointer; 
-            overflow: hidden; /* 限制风景范围 */
-            border-radius: 20px; /* 轻微圆角 */
+            overflow: visible;
         }
         
         /* 漂浮的云朵/星星 */
         .floater { position: absolute; font-size: 14px; opacity: 0.6; animation: floatPass 4s linear infinite; color: var(--active-color); }
-        .f1 { top: 20px; left: 110%; animation-delay: 0s; font-size: 12px; }
-        .f2 { top: 40px; left: 110%; animation-delay: 2s; font-size: 16px; opacity: 0.4; }
+        .f1 { top: -10px; left: 110%; animation-delay: 0s; font-size: 12px; }
+        .f2 { top: 20px; left: 110%; animation-delay: 2s; font-size: 16px; opacity: 0.4; }
         @keyframes floatPass { from { left: 110%; } to { left: -10%; } }
 
-        /* 旋转星轨 (保持不变) */
+        /* 旋转星轨 */
         .orbit-star { position: absolute; top:50%; left:50%; transform:translate(-50%,-50%); width: 140px; height: 140px; border-radius: 50%; border: 2px dashed rgba(0,0,0,0.05); animation: spinOrbit 10s linear infinite; pointer-events: none; }
         .orbit-star::before { content: ''; position: absolute; top: -4px; left: 50%; width: 8px; height: 8px; background: #fdcb6e; border-radius: 50%; transform: translateX(-50%); box-shadow: 0 0 10px #fdcb6e; }
         
-        /* 滚动地面 */
-        .ground-line {
-            position: absolute; bottom: 20px; left: 0; width: 200%; height: 4px;
-            background: repeating-linear-gradient(90deg, var(--active-color) 0, var(--active-color) 10px, transparent 10px, transparent 20px);
-            opacity: 0.3;
-            animation: scrollGround 1s linear infinite;
-        }
-        @keyframes scrollGround { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-
-        /* V33 高清像素小人 (SVG重绘) */
-        .runner-svg { width: 60px; height: 80px; z-index: 10; position: relative; bottom: 10px; filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.1)); }
+        /* V34: Q版二头身像素小人 (重绘) */
+        .runner-svg { width: 70px; height: 70px; z-index: 10; position: relative; bottom: 0; filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.1)); }
         .runner-svg path { fill: var(--active-color); }
+        
+        /* 修复重影: 默认隐藏所有，JS控制显示 */
+        .run-frame-1, .run-frame-2 { display: none; }
+        .bulb-box.frame-1 .run-frame-1 { display: block; }
+        .bulb-box.frame-2 .run-frame-2 { display: block; }
         
         /* 思考气泡 */
         .thought-bubble {
-            position: absolute; top: 10px; right: 30px;
+            position: absolute; top: -10px; right: 20px;
             background: #fff; border: 2px solid var(--active-color);
             padding: 4px 8px; border-radius: 8px 8px 8px 0;
             font-size: 10px; font-weight: bold; color: #555;
@@ -127,14 +121,14 @@
         .emoji { font-size: 40px; display: block; margin-bottom: 10px; animation: float 3s infinite; }
         .quote-txt { font-size: 17px; color: #444; line-height: 1.7; font-weight: bold; font-family: "Songti SC", sans-serif; }
         
+        /* V34: 布局修复 (顶部对齐) */
         .energy-pill { background: rgba(255,255,255,0.8); padding: 6px 14px; border-radius: 20px; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 900; color: #636e72; z-index: 2; cursor: pointer; }
-        .score-pop { animation: scoreScale 0.3s; color: var(--active-color) !important; }
         
-        /* V33 新版布局：倒L型菜单 */
         .sidebar-tools { 
-            position: absolute; right: 20px; top: 75px; 
+            position: absolute; right: 25px; 
+            top: 25px; /* 严格对齐能量条 */
             display: grid; 
-            grid-template-columns: repeat(4, 1fr); /* 第一行4个 */
+            grid-template-columns: repeat(4, 1fr); 
             gap: 10px; z-index: 20; 
             width: auto;
         }
@@ -197,7 +191,7 @@
         .mood-icon { font-size: 30px; }
 
         /* Overlays & Common */
-        .toast-msg { position: fixed; color: #fff; background: rgba(0,0,0,0.8); font-weight: bold; font-size: 14px; pointer-events: none; z-index: 9999; animation: fadeUp 1.5s ease-out forwards; padding: 10px 20px; border-radius: 30px; top: 20%; left: 50%; transform: translateX(-50%); white-space: nowrap; }
+        .toast-msg { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); color: #fff; background: rgba(0,0,0,0.7); font-weight: bold; font-size: 14px; pointer-events: none; z-index: 9999; animation: fadeUp 1.5s ease-out forwards; padding: 10px 20px; border-radius: 30px; white-space: nowrap; backdrop-filter: blur(5px); }
         .reset-feedback { position: fixed; color: #333; font-weight: 900; font-size: 20px; pointer-events: none; z-index: 9999; animation: flyUp 0.6s ease-out forwards; background: rgba(255,255,255,0.9); padding: 5px 12px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transform: translate(-50%, -100%); white-space: nowrap;}
         
         #welcome-overlay { position: fixed; inset: 0; z-index: 2000; background: rgba(255,255,255,0.95); display: flex; justify-content: center; align-items: center; animation: fadeIn 0.4s ease-out; }
@@ -227,7 +221,7 @@
         /* 悬浮关闭按钮 */
         .floating-close { position: absolute; right: 20px; top: 20px; z-index: 100; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.9); display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; }
 
-        /* ================= V33: 票根与布局 ================= */
+        /* ================= V34: 票根与布局 ================= */
         
         /* 1. 输入区域 */
         .input-area { background: #fff; padding: 20px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; }
@@ -258,69 +252,97 @@
         .diary-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 12px; font-weight: bold; opacity: 0.6; border-bottom: 1px dashed rgba(0,0,0,0.1); padding-bottom: 5px; }
         .diary-footer { display: flex; justify-content: flex-end; margin-top: 10px; font-size: 16px; opacity: 0.8; gap: 5px; }
 
-        /* (B) 兑换券: 疯狂动物城罚单票根 (1:1复刻) */
+        /* (B) V34 兑换券: 像素化 ZPD 罚单 */
         .ticket-stub {
-            background: var(--ticket-color);
+            background: var(--active-color); /* V34: 动态跟随人格色 */
             position: relative;
-            margin: 20px 0;
+            margin: 20px auto;
+            width: 90%;
+            aspect-ratio: 1/2; /* V34: 1:2 瘦长比例 */
             filter: drop-shadow(0 4px 5px rgba(0,0,0,0.15));
             font-family: var(--pixel-font);
             color: #fff; 
             display: flex;
             flex-direction: column;
-            /* 底部锯齿 */
-            background-image: radial-gradient(circle at 50% 100%, transparent 6px, var(--ticket-color) 7px);
-            background-size: 20px 20px;
-            background-position: 0 100%;
-            background-repeat: repeat-x;
-            padding: 0 0 20px 0; /* 底部留白给锯齿 */
+            padding: 0;
             animation: popUp 0.3s;
         }
+        
+        /* 方形像素锯齿 (底部) */
+        .ticket-stub::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -10px;
+            width: 100%;
+            height: 10px;
+            background: 
+                linear-gradient(45deg, transparent 33.333%, var(--active-color) 33.333%, var(--active-color) 66.667%, transparent 66.667%),
+                linear-gradient(-45deg, transparent 33.333%, var(--active-color) 33.333%, var(--active-color) 66.667%, transparent 66.667%);
+            background-size: 10px 20px;
+            background-repeat: repeat-x;
+        }
+
         .stub-top-bar {
-            background: rgba(0,0,0,0.2);
-            padding: 8px;
+            background: #2d3436; /* 黑色头部 */
+            padding: 10px;
             text-align: center;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 900;
             letter-spacing: 2px;
-            border-bottom: 2px solid rgba(0,0,0,0.1);
+            border-bottom: 2px solid #000;
         }
+        
+        /* 黑色粗线表格 */
         .stub-grid {
-            border-top: 2px solid rgba(0,0,0,0.1);
-            border-bottom: 2px solid rgba(0,0,0,0.1);
+            border: 2px solid #000;
+            background: rgba(255,255,255,0.9); /* 白色背景内容区 */
             margin: 10px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            color: #000;
         }
         .stub-row-item {
             display: flex;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
+            border-bottom: 2px solid #000;
+            min-height: 30px;
         }
         .stub-row-item:last-child { border-bottom: none; }
         .stub-label {
-            background: rgba(0,0,0,0.1);
-            padding: 5px 8px;
-            width: 60px;
-            font-size: 10px;
-            font-weight: bold;
-            display: flex; align-items: center;
+            background: #e0e0e0;
+            padding: 8px;
+            width: 70px;
+            font-size: 12px;
+            font-weight: 900;
+            display: flex; align-items: center; justify-content: center;
+            border-right: 2px solid #000;
         }
         .stub-val {
-            padding: 5px 8px;
-            font-size: 12px;
+            padding: 8px;
+            font-size: 14px;
             font-weight: bold;
             flex: 1;
             display: flex; align-items: center;
+            word-break: break-all;
         }
+        
         .stub-content-box {
             padding: 15px;
             text-align: center;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
-            line-height: 1.4;
-            text-shadow: 0 1px 0 rgba(0,0,0,0.1);
+            line-height: 1.5;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 2px solid #000;
         }
-        .stub-barcode { height: 30px; width: 80%; margin: 0 auto 10px auto; background: repeating-linear-gradient(90deg, #fff 0, #fff 2px, transparent 2px, transparent 4px, #fff 4px, #fff 6px); opacity: 0.8; }
+        
+        .stub-barcode { height: 40px; width: 90%; margin: 10px auto; background: repeating-linear-gradient(90deg, #000 0, #000 2px, transparent 2px, transparent 4px, #000 4px, #000 6px); }
 
-        .item-delete { position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; background: #333; color: #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; font-weight: bold; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10; }
+        .item-delete { position: absolute; top: -10px; right: -10px; width: 24px; height: 24px; background: #333; color: #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; font-weight: bold; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10; border: 2px solid #fff; }
 
         .shop-item-desc { font-size: 10px; color: #999; margin-top: 4px; font-style: italic; }
 
@@ -337,7 +359,7 @@
             <div class="cat-row c-yellow"><div class="cat-label">自由探险 (SP)</div><div class="btn-grid"><button class="detail-btn" onclick="saveUser('ISTP','yellow', this)">ISTP</button><button class="detail-btn" onclick="saveUser('ISFP','yellow', this)">ISFP</button><button class="detail-btn" onclick="saveUser('ESTP','yellow', this)">ESTP</button><button class="detail-btn" onclick="saveUser('ESFP','yellow', this)">ESFP</button></div></div>
             <div class="cat-row c-blue"><div class="cat-label">忠诚守护 (SJ)</div><div class="btn-grid"><button class="detail-btn" onclick="saveUser('ISTJ','blue', this)">ISTJ</button><button class="detail-btn" onclick="saveUser('ISFJ','blue', this)">ISFJ</button><button class="detail-btn" onclick="saveUser('ESTJ','blue', this)">ESTJ</button><button class="detail-btn" onclick="saveUser('ESFJ','blue', this)">ESFJ</button></div></div>
         </div>
-        <div class="footer-logo-p1">王老十六 © WANG16 MBTI V33</div>
+        <div class="footer-logo-p1">王老十六 © WANG16 MBTI V34</div>
     </div>
 
     <div id="welcome-overlay" class="hidden">
@@ -372,7 +394,7 @@
                 <div class="side-btn btn-col-2" onclick="openKeyUI()"><i class="fa-solid fa-key" style="color:#333"></i></div>
             </div>
             
-            <div class="bulb-box" onmousedown="collectEnergy(event)" ontouchstart="collectEnergy(event)">
+            <div class="bulb-box frame-1" onmousedown="collectEnergy(event)" ontouchstart="collectEnergy(event)">
                 <div class="floater f1"><i class="fa-solid fa-cloud"></i></div>
                 <div class="floater f2"><i class="fa-solid fa-star"></i></div>
                 
@@ -380,14 +402,18 @@
                 
                 <div class="thought-bubble" id="thoughtBubble">...</div>
 
-                <svg class="runner-svg run-frame-1" viewBox="0 0 24 24">
-                   <path d="M9,2 h6 v6 h-6 z M10,8 h4 v4 h-4 z M11,12 h2 v3 h-2 z M13,12 h3 v3 h-3 z M8,12 h3 v3 h-3 z M11,15 h2 v4 h2 v2 h-4 z M9,15 h2 v3 h-2 z M6,13 h2 v2 h-2 z M16,13 h2 v2 h-2 z" />
+                <svg class="runner-svg run-frame-1" viewBox="0 0 32 32">
+                   <path d="M8,4 h16 v14 h-16 z" />
+                   <path fill="#fff" d="M11,8 h4 v4 h-4 z M19,8 h4 v4 h-4 z" />
+                   <path d="M12,18 h8 v8 h-8 z" />
+                   <path d="M10,20 h2 v4 h-2 z M22,20 h2 v4 h-2 z M11,26 h3 v4 h-3 z M19,26 h3 v4 h-3 z" />
                 </svg>
-                <svg class="runner-svg run-frame-2" viewBox="0 0 24 24">
-                   <path d="M9,3 h6 v6 h-6 z M10,9 h4 v4 h-4 z M11,13 h2 v3 h-2 z M14,13 h3 v-2 h-3 z M7,13 h3 v-2 h-3 z M12,16 h3 v4 h-3 z M9,16 h3 v2 h2 v2 h-5 z" />
+                <svg class="runner-svg run-frame-2" viewBox="0 0 32 32">
+                   <path d="M8,3 h16 v14 h-16 z" />
+                   <path fill="#fff" d="M11,7 h4 v4 h-4 z M19,7 h4 v4 h-4 z" />
+                   <path d="M12,17 h8 v8 h-8 z" />
+                   <path d="M9,18 h3 v3 h-3 z M22,18 h3 v3 h-3 z M12,25 h3 v3 h-3 z M18,25 h3 v3 h-3 z" />
                 </svg>
-                
-                <div class="ground-line"></div>
             </div>
             
             <div id="userId" class="user-badge"><span id="typeText" class="type-highlight"></span> 专属空间</div>
@@ -505,7 +531,7 @@
         let user={type:'',color:''}, score=0, wheelData=["行动","等待","求助","放弃"], wheelAngle=0, resetCounter=0;
         let eraserCount = 0; 
 
-        // V33: MBTI 专属气泡语录
+        // 气泡语录
         const bubbleTexts = {
             "INTJ": ["分析中...", "无聊", "...", "计划通"],
             "INTP": ["为什么?", "zzZ", "发呆", "有趣的BUG"],
@@ -541,7 +567,7 @@
         let currentTarget = "";
         const COOLDOWN_TIME = 60 * 60 * 1000; 
         
-        // UID 生成逻辑
+        // UID 生成
         let userUid = localStorage.getItem('w16_uid');
         if(!userUid) { userUid = '#'+Math.floor(1000+Math.random()*9000); localStorage.setItem('w16_uid', userUid); }
 
@@ -567,7 +593,7 @@
             if(!rpgState.relationship) rpgState.relationship = {};
             initGrid();
             startRunner(); 
-            startBubbleLoop(); // V33: 启动气泡
+            startBubbleLoop(); 
         };
 
         // ================= 基础逻辑 =================
@@ -603,15 +629,17 @@
         function startRunner() {
             if(runnerInterval) clearInterval(runnerInterval);
             const box = document.querySelector('.bulb-box');
+            let isFrame1 = true;
             runnerInterval = setInterval(() => {
-                box.classList.toggle('frame-2');
-            }, 200); 
+                isFrame1 = !isFrame1;
+                if(isFrame1) { box.classList.add('frame-1'); box.classList.remove('frame-2'); }
+                else { box.classList.add('frame-2'); box.classList.remove('frame-1'); }
+            }, 250); 
         }
         
-        // V33: 气泡循环
         function startBubbleLoop() {
             setInterval(() => {
-                if(Math.random() > 0.3) showThought(); // 70% 概率显示
+                if(Math.random() > 0.3) showThought(); 
             }, 4000);
         }
         function showThought() {
@@ -666,7 +694,14 @@
         }
 
         function updateUI(animate = false){ const s = document.getElementById('scoreDisplay'); s.innerText = score; if(animate) { s.classList.remove('score-pop'); void s.offsetWidth; s.classList.add('score-pop'); } }
-        function showToast(msg) { const old = document.querySelector('.toast-msg'); if(old) old.remove(); const t = document.createElement('div'); t.className = 'toast-msg'; t.innerText = msg; document.body.appendChild(t); setTimeout(()=>t.remove(), 1500); }
+        
+        // V34: 气泡提示 (替代 alert)
+        function showToast(msg) { 
+            const old = document.querySelector('.toast-msg'); if(old) old.remove(); 
+            const t = document.createElement('div'); t.className = 'toast-msg'; t.innerText = msg; 
+            document.body.appendChild(t); 
+            setTimeout(()=>t.remove(), 1500); 
+        }
         
         let lastClickTime = 0;
         function resetCheck(e) {
@@ -742,7 +777,8 @@
 
         function buyItem(id) {
             const item = shopItems.find(i => i.id === id);
-            if(score < item.price) { alert("能量不足！"); return; }
+            if(score < item.price) { showToast("能量不足！"); return; }
+            // V34: 使用自定义 confirm 替代? 为了简化，这里保留 confirm 询问，但成功后用 toast
             if(!confirm(`确认消耗 ${item.price} 能量购买 [${item.name}] 吗？`)) return;
             
             score -= item.price;
@@ -751,16 +787,16 @@
             if(id === 'eraser') {
                 eraserCount++;
                 localStorage.setItem('w16_erasers', eraserCount);
-                alert("✨ 获得了一块遗忘橡皮擦！\n在日记中可以看到删除按钮了。");
+                showToast("✨ 获得了一块遗忘橡皮擦！");
             } else {
-                alert(`✨ 已解锁 [${item.name}]！\n(请在设置中查看或截图保存)`);
+                showToast(`✨ 已解锁 [${item.name}]！`);
             }
             
             updateUI();
             openShop(); 
         }
 
-        // --- V33 核心: 票根渲染 ---
+        // --- V34: 票根渲染 ---
         function openDiary() {
             document.getElementById('diary-overlay').classList.remove('hidden');
             renderTickets('all');
@@ -777,7 +813,7 @@
         
         function createTicket() {
             const txt = document.getElementById('ticket-content').value;
-            if(!txt.trim()) { alert("请写点什么吧..."); return; }
+            if(!txt.trim()) { showToast("请写点什么吧..."); return; }
             
             const newTicket = {
                 id: Date.now(),
@@ -795,12 +831,12 @@
             document.getElementById('ticket-content').value = "";
             renderTickets('all');
             score += 2; localStorage.setItem('w16_score', score); updateUI();
-            alert("已保存！能量 +2");
+            showToast("已保存！能量 +2"); // V34: 气泡提示
         }
         
         function deleteTicket(id) {
-            if(eraserCount <= 0) { alert("没有橡皮擦了..."); return; }
-            if(confirm("想忘记一段回忆 可不是一件轻松的事情呢。\n确定要消耗 1 块橡皮擦删除这条记录吗？")) {
+            if(eraserCount <= 0) { showToast("没有橡皮擦了..."); return; }
+            if(confirm("确定要消耗 1 块橡皮擦删除这条记录吗？")) {
                 let tickets = JSON.parse(localStorage.getItem('w16_tickets') || "[]");
                 tickets = tickets.filter(t => t.id !== id);
                 localStorage.setItem('w16_tickets', JSON.stringify(tickets));
@@ -809,7 +845,7 @@
                 localStorage.setItem('w16_erasers', eraserCount);
                 
                 renderTickets('all');
-                alert("回忆已擦除。");
+                showToast("回忆已擦除。");
             }
         }
 
@@ -845,23 +881,21 @@
                         </div>
                     `;
                 } else {
-                    // 兑换券: 疯狂动物城罚单 (Zootopia Ticket Style)
+                    // V34 兑换券: ZPD 像素风
                     div.className = 'ticket-stub'; 
                     div.innerHTML = `
                         ${deleteBtn}
-                        <div class="stub-top-bar">兑 换 券</div>
+                        <div class="stub-top-bar">ZPD 兑换券</div>
                         <div class="stub-grid">
                             <div class="stub-row-item">
                                 <div class="stub-label">编号</div>
-                                <div class="stub-val" style="font-family:'Courier New'">ZPD-${t.id.toString().slice(-6)}</div>
+                                <div class="stub-val" style="font-family:'Courier New'">#${t.id.toString().slice(-6)}</div>
                             </div>
                             <div class="stub-row-item">
                                 <div class="stub-label">日期</div>
                                 <div class="stub-val">${t.date}</div>
                             </div>
-                        </div>
-                        <div class="stub-content-box">${t.content}</div>
-                        <div class="stub-grid">
+                            <div class="stub-content-box">${t.content}</div>
                             <div class="stub-row-item">
                                 <div class="stub-label">心情</div>
                                 <div class="stub-val">${t.mood}</div>
@@ -871,7 +905,7 @@
                                 <div class="stub-val">${t.mbti}</div>
                             </div>
                         </div>
-                        <div style="margin-top:10px;"><div class="stub-barcode"></div></div>
+                        <div style="margin-top:0;"><div class="stub-barcode"></div></div>
                     `;
                 }
                 list.appendChild(div); 
@@ -885,15 +919,15 @@
             const code = document.getElementById('keyCodeInput').value.trim();
             if(!code) return;
             closeKeyUI();
-            if(code === "V24-VIP-GIFT") { score += 500; rpgState.exp += 50; updateRpgUI(); updateUI(); alert("✨ 获得 VIP 能量包！(能量+500)"); return; }
-            if(code.startsWith("W16-")) { try { const raw = code.substring(4); const jsonStr = decodeURIComponent(atob(raw)); const data = JSON.parse(jsonStr); showVisitorCard(data); } catch(e) { alert("无效的神秘代码"); } return; }
-            if(code.startsWith("DATA-")) { try { const dataStr = decodeURIComponent(atob(code.substring(5))); const allData = JSON.parse(dataStr); if(confirm("确定要导入这份存档吗？当前数据将被覆盖！")) { localStorage.setItem('w16_user_v16', JSON.stringify(allData.user)); localStorage.setItem('w16_score', allData.score); localStorage.setItem('w16_rpg', JSON.stringify(allData.rpg)); if(allData.tickets) localStorage.setItem('w16_tickets', JSON.stringify(allData.tickets)); alert("数据已导入，系统将重启。"); location.reload(); } } catch(e) { alert("数据损坏，无法导入"); } return; }
-            alert("🔑 钥匙转动了，但似乎什么也没发生...");
+            if(code === "V24-VIP-GIFT") { score += 500; rpgState.exp += 50; updateRpgUI(); updateUI(); showToast("✨ 获得 VIP 能量包！(能量+500)"); return; }
+            if(code.startsWith("W16-")) { try { const raw = code.substring(4); const jsonStr = decodeURIComponent(atob(raw)); const data = JSON.parse(jsonStr); showVisitorCard(data); } catch(e) { showToast("无效的神秘代码"); } return; }
+            if(code.startsWith("DATA-")) { try { const dataStr = decodeURIComponent(atob(code.substring(5))); const allData = JSON.parse(dataStr); if(confirm("确定要导入这份存档吗？当前数据将被覆盖！")) { localStorage.setItem('w16_user_v16', JSON.stringify(allData.user)); localStorage.setItem('w16_score', allData.score); localStorage.setItem('w16_rpg', JSON.stringify(allData.rpg)); if(allData.tickets) localStorage.setItem('w16_tickets', JSON.stringify(allData.tickets)); alert("数据已导入，系统将重启。"); location.reload(); } } catch(e) { showToast("数据损坏，无法导入"); } return; }
+            showToast("🔑 钥匙转动了，但似乎什么也没发生...");
         }
         function getBestRelation() { let best = "暂无"; let maxVal = 0; for (const [key, val] of Object.entries(rpgState.relationship)) { if (val > maxVal) { maxVal = val; best = key; } } return best; }
-        function exportMemoryCode() { const data = { t: user.type, l: rpgState.lvl, h: rpgState.hp, b: getBestRelation(), s: score, d: new Date().toLocaleDateString() }; const jsonStr = JSON.stringify(data); const code = "W16-" + btoa(encodeURIComponent(jsonStr)); navigator.clipboard.writeText(code).then(() => { alert("记忆代码已复制！\n" + code); }).catch(() => { prompt("请复制:", code); }); }
+        function exportMemoryCode() { const data = { t: user.type, l: rpgState.lvl, h: rpgState.hp, b: getBestRelation(), s: score, d: new Date().toLocaleDateString() }; const jsonStr = JSON.stringify(data); const code = "W16-" + btoa(encodeURIComponent(jsonStr)); navigator.clipboard.writeText(code).then(() => { showToast("记忆代码已复制！"); }).catch(() => { prompt("请复制:", code); }); }
         function showVisitorCard(d) { const overlay = document.createElement('div'); overlay.style = "position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:9999;display:flex;justify-content:center;align-items:center;animation:fadeIn 0.3s;"; overlay.innerHTML = ` <div style="background:#fff;width:80%;max-width:320px;border-radius:20px;padding:25px;text-align:center;position:relative;box-shadow:0 0 50px rgba(255,255,255,0.2);"> <div style="position:absolute;top:-20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:5px 15px;border-radius:15px;font-size:12px;font-weight:bold;">观测报告</div> <h2 style="margin:20px 0 10px;color:#333;">${d.t} 的精神切片</h2> <div style="font-size:13px;color:#888;margin-bottom:20px;">记录于 ${d.d}</div> <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;"> <div style="background:#f5f6fa;padding:10px;border-radius:10px;"><div style="font-size:12px;color:#999;">当前等级</div><div style="font-size:18px;font-weight:900;color:#2d3436;">LV.${d.l}</div></div> <div style="background:#f5f6fa;padding:10px;border-radius:10px;"><div style="font-size:12px;color:#999;">剩余心态</div><div style="font-size:18px;font-weight:900;color:${d.h<20?'#d63031':'#00b894'};">${d.h}</div></div> </div> <div style="background:#fffbf0;border:1px solid #ffeaa7;padding:15px;border-radius:12px;margin-bottom:20px;text-align:left;"> <div style="font-size:12px;color:#b7791f;font-weight:bold;margin-bottom:5px;">🤝 灵魂密友</div><div style="font-size:14px;color:#333;">Ta 似乎与 <span style="font-weight:900;font-size:16px;">${d.b}</span> 相处得非常融洽。</div> </div> <button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:12px;background:#333;color:#fff;border:none;border-radius:10px;font-weight:bold;cursor:pointer;">关闭报告</button> </div> `; document.body.appendChild(overlay); }
-        function exportSaveData() { const allData = { user: JSON.parse(localStorage.getItem('w16_user_v16')||'{}'), score: localStorage.getItem('w16_score')||0, rpg: JSON.parse(localStorage.getItem('w16_rpg')||'{}'), tickets: JSON.parse(localStorage.getItem('w16_tickets')||'[]') }; const code = "DATA-" + btoa(encodeURIComponent(JSON.stringify(allData))); navigator.clipboard.writeText(code).then(()=>alert("存档提取成功！\n请在新版本中点击'钥匙'并粘贴此代码。")).catch(()=>prompt("复制存档码:",code)); }
+        function exportSaveData() { const allData = { user: JSON.parse(localStorage.getItem('w16_user_v16')||'{}'), score: localStorage.getItem('w16_score')||0, rpg: JSON.parse(localStorage.getItem('w16_rpg')||'{}'), tickets: JSON.parse(localStorage.getItem('w16_tickets')||'[]') }; const code = "DATA-" + btoa(encodeURIComponent(JSON.stringify(allData))); navigator.clipboard.writeText(code).then(()=>showToast("存档提取成功！")).catch(()=>prompt("复制存档码:",code)); }
     </script>
 </body>
 </html>
