@@ -19,6 +19,8 @@
             --blue: #0984e3; --blue-bg: #e7f5ff;
             --active-color: #00b894; --active-bg: #e6fcf5; --rpg-theme: #00b894; 
             --pixel-font: "Courier New", Courier, monospace; 
+            --paper-color: #fdf6e3; /* 泛黄旧纸张色 */
+            --ticket-color: #ff7675; /* 动物城罚单橙红 */
         }
         body { margin: 0; padding: 0; height: 100vh; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow: hidden; background: #fff; -webkit-user-select: none; user-select: none; }
         .hidden { display: none !important; }
@@ -43,47 +45,51 @@
         .footer-logo-p1 { text-align: center; margin-top: 30px; font-size: 12px; font-weight: bold; color: #b2bec3; z-index: 2;}
 
         /* P2: 主页 */
-        #main-page { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; position: relative; }
-        .bg-orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.6; z-index: -1; transition: background 1s ease; animation: floatOrb 10s infinite ease-in-out; } 
-        .heal-card { width: 85%; max-width: 360px; height: 500px; background: rgba(255,255,255,0.85); backdrop-filter: blur(30px); border-radius: 30px; padding: 25px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; border: 1px solid rgba(255,255,255,0.8); position: relative; overflow: visible; }
-        .card-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; position: relative; z-index: 2; }
+        #main-page { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden; } /* 确保波纹不溢出 */
         
-        /* ================= V31 核心特效：聚能光环 ================= */
-        .bulb-box { 
-            height: 140px; width: 140px; 
-            display: flex; justify-content: center; align-items: center; 
-            margin: 10px 0; position: relative; cursor: pointer;
-            border-radius: 50%;
-            /* 基础发光底色，跟随人格颜色 */
-            background: radial-gradient(circle, var(--active-bg) 0%, transparent 70%);
-        }
-        
-        /* 向内收缩的波纹 */
-        .ripple-ring {
+        /* V31 核心：全屏聚能背景 (位于卡片后方) */
+        .converge-bg {
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             width: 100%; height: 100%;
-            border: 2px solid var(--active-color); /* 颜色跟随 */
+            z-index: 0; /* 在最底层 */
+            pointer-events: none;
+        }
+        .bg-ripple {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px solid var(--active-color);
             border-radius: 50%;
             opacity: 0;
-            pointer-events: none;
-            /* 聚能动画：从大变小，从无到有 */
-            animation: suckRipple 2s infinite linear;
+            animation: converge 4s infinite linear;
         }
-        .ripple-ring:nth-child(1) { animation-delay: 0s; }
-        .ripple-ring:nth-child(2) { animation-delay: 1s; }
+        .bg-ripple:nth-child(1) { animation-delay: 0s; }
+        .bg-ripple:nth-child(2) { animation-delay: 1.3s; }
+        .bg-ripple:nth-child(3) { animation-delay: 2.6s; }
 
-        @keyframes suckRipple {
-            0% { width: 140%; height: 140%; opacity: 0; border-width: 1px; }
-            50% { opacity: 0.3; }
-            100% { width: 20%; height: 20%; opacity: 0; border-width: 4px; }
+        @keyframes converge {
+            0% { width: 150vmax; height: 150vmax; opacity: 0; border-width: 1px; }
+            30% { opacity: 0.2; }
+            100% { width: 0; height: 0; opacity: 0; border-width: 5px; }
         }
 
+        .bg-orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.6; z-index: -1; transition: background 1s ease; animation: floatOrb 10s infinite ease-in-out; } 
+        
+        /* 卡片主体 */
+        .heal-card { width: 85%; max-width: 360px; height: 500px; background: rgba(255,255,255,0.85); backdrop-filter: blur(30px); border-radius: 30px; padding: 25px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; border: 1px solid rgba(255,255,255,0.8); position: relative; overflow: visible; z-index: 10; }
+        .card-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; position: relative; z-index: 2; }
+        
+        /* 恢复原版小人背景 (旋转星轨) */
+        .bulb-box { height: 140px; width: 140px; display: flex; justify-content: center; align-items: center; margin: 10px 0; position: relative; cursor: pointer; }
+        .orbit-star { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px dashed rgba(0,0,0,0.05); animation: spinOrbit 10s linear infinite; pointer-events: none; }
+        .orbit-star::before { content: ''; position: absolute; top: -4px; left: 50%; width: 8px; height: 8px; background: #fdcb6e; border-radius: 50%; transform: translateX(-50%); box-shadow: 0 0 10px #fdcb6e; }
+        
         /* 像素小人 SVG */
-        .runner-svg { width: 80px; height: 80px; z-index: 10; transition: transform 0.1s; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1)); }
+        .runner-svg { width: 80px; height: 80px; z-index: 10; transition: transform 0.1s; filter: drop-shadow(4px 4px 0 rgba(0,0,0,0.1)); }
         .runner-svg:active { transform: scale(0.9); }
-        .runner-svg path { fill: var(--active-color); } /* 小人变色 */
+        .runner-svg path { fill: var(--active-color); } 
         .run-frame-1 { display: block; } .run-frame-2 { display: none; }
         .bulb-box.frame-2 .run-frame-1 { display: none; } .bulb-box.frame-2 .run-frame-2 { display: block; }
 
@@ -180,9 +186,9 @@
         /* 悬浮关闭按钮 */
         .floating-close { position: absolute; right: 20px; top: 20px; z-index: 100; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.9); display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; }
 
-        /* ================= V31: 修复版日记UI ================= */
+        /* ================= V31: 怀旧日记 & 疯狂票根 ================= */
         
-        /* 1. 输入区域：回归 V29 纯净圆角卡片 */
+        /* 1. 输入区域：严格回退到 V29 纯净圆角卡片 */
         .input-area { 
             background: #fff; 
             padding: 20px; 
@@ -191,87 +197,67 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
             border: 1px solid #f0f0f0;
         }
-        
         .switch-row { display: flex; gap: 10px; margin-bottom: 15px; }
-        .switch-btn { 
-            flex: 1; padding: 10px; border: none; 
-            background: #f0f2f5; border-radius: 10px; 
-            font-weight: 900; color: #999; cursor: pointer; transition: 0.2s; 
-        }
-        .switch-btn.active { 
-            background: var(--active-color); color: #fff; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
-        }
-        
-        .text-in { 
-            width: 100%; border: none; 
-            background: #f9f9f9; border-radius: 12px; 
-            padding: 15px; box-sizing: border-box; 
-            font-size: 14px; min-height: 80px; resize: none; 
-            margin-bottom: 15px; outline: none; color: #333;
-            font-family: -apple-system, sans-serif; /* 恢复现代字体 */
-        }
-        
+        .switch-btn { flex: 1; padding: 10px; border: none; background: #f0f2f5; border-radius: 10px; font-weight: 900; color: #999; cursor: pointer; transition: 0.2s; }
+        .switch-btn.active { background: var(--active-color); color: #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .text-in { width: 100%; border: none; background: #f9f9f9; border-radius: 12px; padding: 15px; box-sizing: border-box; font-size: 14px; min-height: 80px; resize: none; margin-bottom: 15px; outline: none; color: #333; font-family: -apple-system, sans-serif; }
         .icon-selector { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
-        .is-btn { 
-            width: 36px; height: 36px; border-radius: 50%; 
-            background: #f0f2f5; display: flex; justify-content: center; 
-            align-items: center; font-size: 18px; flex-shrink: 0; 
-            cursor: pointer; transition: 0.2s; border: none;
-        }
-        .is-btn.sel { 
-            background: var(--active-color); 
-            border: 2px solid #fff; 
-            box-shadow: 0 0 0 2px var(--active-color); 
-        }
-        
-        .s-btn { 
-            width: 100%; padding: 14px; 
-            background: #2d3436; color: #fff; 
-            border: none; border-radius: 12px; 
-            margin-top: 10px; font-weight: bold; cursor: pointer;
-        }
+        .is-btn { width: 36px; height: 36px; border-radius: 50%; background: #f0f2f5; display: flex; justify-content: center; align-items: center; font-size: 18px; flex-shrink: 0; cursor: pointer; transition: 0.2s; border: none; }
+        .is-btn.sel { background: var(--active-color); border: 2px solid #fff; box-shadow: 0 0 0 2px var(--active-color); }
+        .s-btn { width: 100%; padding: 14px; background: #2d3436; color: #fff; border: none; border-radius: 12px; margin-top: 10px; font-weight: bold; cursor: pointer; }
 
-        /* 2. 票根容器 (展示用) */
+        /* 2. 列表展示: 视觉分层 */
+        
+        /* (A) 日记: 泛黄旧纸张 */
+        .diary-paper {
+            background: var(--paper-color);
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            position: relative;
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
+            animation: slideInUp 0.3s;
+            border-left: 3px solid rgba(0,0,0,0.1); /* 简单的装订线感 */
+        }
+        .diary-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 12px; font-weight: bold; opacity: 0.6; border-bottom: 1px dashed rgba(0,0,0,0.1); padding-bottom: 5px; }
+        .diary-footer { display: flex; justify-content: flex-end; margin-top: 10px; font-size: 16px; opacity: 0.8; gap: 5px; }
+
+        /* (B) 兑换券: 疯狂动物城罚单票根 */
         .ticket-stub {
-            background: #fff;
+            background: var(--ticket-color);
             position: relative;
             margin: 20px 0;
-            filter: drop-shadow(0 4px 0 rgba(0,0,0,0.1));
+            filter: drop-shadow(0 4px 5px rgba(0,0,0,0.15));
             font-family: var(--pixel-font);
+            color: #fff; /* 票面白字 */
             display: flex;
             flex-direction: column;
+            /* 两侧锯齿 */
             background-image: 
-                radial-gradient(circle at 0 10px, transparent 6px, #fff 7px),
-                radial-gradient(circle at 100% 10px, transparent 6px, #fff 7px);
+                radial-gradient(circle at 0 10px, transparent 6px, var(--ticket-color) 7px),
+                radial-gradient(circle at 100% 10px, transparent 6px, var(--ticket-color) 7px);
             background-size: 100% 20px;
             background-position: 0 0, 0 0;
             background-repeat: repeat-y;
-            padding: 10px 18px;
-            border-radius: 4px;
+            padding: 15px 22px; /* 避开锯齿 */
+            animation: popUp 0.3s;
         }
-
-        .stub-header {
-            background: var(--active-color);
-            color: #fff;
-            padding: 10px 15px;
-            text-align: center;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border-radius: 2px;
-            margin-bottom: 10px;
-            position: relative;
+        .ticket-stub::before {
+            content: ''; position: absolute; left: 22px; right: 22px; top: 5px; bottom: 5px;
+            border: 2px dashed rgba(255,255,255,0.5); /* 内虚线边框 */
+            pointer-events: none;
         }
-        .stub-header::after { content: ""; display: block; width: 100%; height: 2px; background: rgba(255,255,255,0.3); margin-top: 5px; }
+        .stub-title {
+            text-align: center; font-weight: 900; font-size: 18px; margin-bottom: 5px; letter-spacing: 3px; border-bottom: 2px solid #fff; padding-bottom: 5px;
+        }
+        .stub-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; font-weight: bold; }
+        .stub-content { font-size: 15px; font-weight: bold; text-align: center; margin: 15px 0; line-height: 1.4; text-shadow: 0 1px 0 rgba(0,0,0,0.1); }
+        .stub-barcode { height: 30px; width: 80%; margin: 0 auto; background: repeating-linear-gradient(90deg, #fff 0, #fff 2px, transparent 2px, transparent 4px, #fff 4px, #fff 6px); opacity: 0.8; }
 
-        .stub-body { padding: 10px 5px; font-size: 14px; line-height: 1.6; color: #333; font-weight: bold; text-align: justify; min-height: 60px; }
-
-        .stub-footer { border-top: 2px dashed #ccc; padding-top: 10px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .stub-meta { font-size: 10px; color: #999; font-weight: bold; }
-        .barcode { height: 25px; width: 100px; background: repeating-linear-gradient(90deg, #333 0, #333 2px, transparent 2px, transparent 4px, #333 4px, #333 6px); }
-        
-        .stub-delete { position: absolute; top: -10px; right: -10px; width: 30px; height: 30px; background: #ff4757; color: #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); font-weight: bold; z-index: 10; animation: popUp 0.3s; }
+        /* 删除按钮 (统一) */
+        .item-delete { position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; background: #333; color: #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; font-weight: bold; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10; }
 
         .shop-item-desc { font-size: 10px; color: #999; margin-top: 4px; font-style: italic; }
 
@@ -302,7 +288,13 @@
     </div>
 
     <div id="main-page" class="hidden">
+        <div class="converge-bg">
+            <div class="bg-ripple"></div>
+            <div class="bg-ripple"></div>
+            <div class="bg-ripple"></div>
+        </div>
         <div class="bg-orb orb-1"></div><div class="bg-orb orb-2"></div><div class="bg-orb orb-3"></div>
+        
         <div class="heal-card">
             <div class="card-header">
                 <div class="energy-pill"><i class="fa-solid fa-bolt" style="color:#f1c40f;"></i><span id="scoreDisplay">0</span></div>
@@ -317,8 +309,7 @@
             </div>
             
             <div class="bulb-box" onmousedown="collectEnergy(event)" ontouchstart="collectEnergy(event)">
-                <div class="ripple-ring"></div>
-                <div class="ripple-ring"></div>
+                <div class="orbit-star"></div>
                 <svg class="runner-svg run-frame-1" viewBox="0 0 16 16"><path d="M6,1 h4 v4 h-4 z" /><path d="M5,5 h6 v5 h-6 z" /><path d="M5,10 h2 v5 h-2 z" /><path d="M9,10 h2 v3 h2 v-2 h-2 z" /><path d="M3,6 h2 v3 h-2 z" /><path d="M11,6 h2 v3 h-2 z" /></svg>
                 <svg class="runner-svg run-frame-2" viewBox="0 0 16 16"><path d="M6,2 h4 v4 h-4 z" /><path d="M5,6 h6 v5 h-6 z" /><path d="M4,11 h3 v-1 h-1 v-2 h-2 z" /><path d="M9,11 h2 v5 h-2 z" /><path d="M11,7 h3 v2 h-3 z" /><path d="M3,7 h2 v2 h-2 z" /></svg>
             </div>
@@ -719,30 +710,39 @@
             
             tickets.forEach(t => {
                 const div = document.createElement('div');
-                div.className = 'ticket-stub'; 
-                
-                const typeLabel = t.type === 'diary' ? 'ADMIT ONE' : 'COUPON';
-                
                 let deleteBtn = '';
                 if(eraserCount > 0) {
-                    deleteBtn = `<div class="stub-delete" onclick="deleteTicket(${t.id})">×</div>`;
+                    deleteBtn = `<div class="item-delete" onclick="deleteTicket(${t.id})">×</div>`;
                 }
 
-                div.innerHTML = `
-                    ${deleteBtn}
-                    <div class="stub-header">
-                        <span>${t.date}</span>
-                    </div>
-                    <div class="stub-body">
-                        ${t.content}
-                    </div>
-                    <div class="stub-footer">
-                        <div class="stub-meta">
-                            <span>${t.mood}</span> | <span>${t.mbti}</span> | <span>${typeLabel}</span>
+                if (t.type === 'diary') {
+                    // 日记：泛黄旧纸张样式
+                    div.className = 'diary-paper';
+                    div.innerHTML = `
+                        ${deleteBtn}
+                        <div class="diary-header">
+                            <span>${t.date}</span>
+                            <span>心情随笔</span>
                         </div>
-                        <div class="barcode"></div>
-                    </div>
-                `;
+                        <div style="font-weight:bold;margin-bottom:10px;">${t.content}</div>
+                        <div class="diary-footer">
+                            <span>${t.mood}</span> <span>${t.mbti}</span>
+                        </div>
+                    `;
+                } else {
+                    // 兑换券：疯狂动物城罚单样式
+                    div.className = 'ticket-stub'; 
+                    div.innerHTML = `
+                        ${deleteBtn}
+                        <div class="stub-title">兑换券</div>
+                        <div class="stub-row"><span>编号</span><span>NO.${t.id.toString().slice(-6)}</span></div>
+                        <div class="stub-row"><span>日期</span><span>${t.date}</span></div>
+                        <div class="stub-content">${t.content}</div>
+                        <div class="stub-row"><span>心情</span><span>${t.mood}</span></div>
+                        <div class="stub-row"><span>签署</span><span>${t.mbti}</span></div>
+                        <div style="margin-top:10px;"><div class="stub-barcode"></div></div>
+                    `;
+                }
                 list.appendChild(div); 
             });
         }
