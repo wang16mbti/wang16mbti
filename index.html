@@ -21,14 +21,25 @@
             --pixel-font: "Courier New", Courier, monospace; 
             --paper-color: #fdf6e3; 
         }
-        body { margin: 0; padding: 0; height: 100vh; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow: hidden; background: #fff; -webkit-user-select: none; user-select: none; }
+        
+        /* V41: 修复 iOS 垂直居中偏上的问题 */
+        html { height: 100%; height: -webkit-fill-available; }
+        body { 
+            margin: 0; padding: 0; 
+            height: 100%; height: -webkit-fill-available; /* 关键修复 */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            overflow: hidden; 
+            background: #fff; 
+            -webkit-user-select: none; user-select: none; 
+        }
+        
         .hidden { display: none !important; }
 
-        /* V36: 全局氛围滤镜 (让背景染上人格色) */
+        /* 全局氛围滤镜 */
         #main-page::before {
             content: ''; position: absolute; inset: 0;
             background: var(--active-color);
-            opacity: 0.08; /* 全局淡淡的染色 */
+            opacity: 0.08; 
             pointer-events: none; z-index: 0;
         }
 
@@ -54,7 +65,6 @@
         /* P2: 主页 */
         #main-page { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden; }
         
-        /* V36: 强氛围呼吸背景 */
         .converge-bg {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 100%; height: 100%; z-index: 0; pointer-events: none;
@@ -72,7 +82,7 @@
 
         @keyframes breatheGlow {
             0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
-            50% { opacity: 0.5; } /* V36: 极大提升可见度 (0.15 -> 0.5) */
+            50% { opacity: 0.5; } 
             100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0; }
         }
 
@@ -82,7 +92,6 @@
         .heal-card { width: 85%; max-width: 360px; height: 500px; background: rgba(255,255,255,0.85); backdrop-filter: blur(30px); border-radius: 30px; padding: 25px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; border: 1px solid rgba(255,255,255,0.8); position: relative; overflow: visible; z-index: 10; }
         .card-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; position: relative; z-index: 2; }
         
-        /* 小人容器 (固定 140x140 确保特效居中) */
         .bulb-box { 
             width: 140px; height: 140px;
             display: flex; justify-content: center; align-items: center; 
@@ -90,38 +99,76 @@
             overflow: visible; 
         }
         
-        /* V36: 修复星轨 (完美居中, 颜色加深) */
+        /* V41: 流星拖尾 + 星屑特效 */
         .orbit-star { 
             position: absolute; 
-            top: 0; left: 0; right: 0; bottom: 0; 
+            inset: 0; 
             border-radius: 50%; 
-            border: 2px dashed rgba(0,0,0,0.25); /* 加深星轨 */
-            animation: spinOrbit 10s linear infinite; 
+            animation: spinOrbit 4s linear infinite; 
             pointer-events: none; 
-        }
-        .orbit-star::before { 
-            content: ''; position: absolute; top: -4px; left: 50%; 
-            width: 8px; height: 8px; background: #fdcb6e; 
-            border-radius: 50%; transform: translateX(-50%); 
-            box-shadow: 0 0 10px #fdcb6e; 
+            z-index: 1; 
         }
 
-        /* 漂浮的云朵/星星 */
-        .floater { position: absolute; font-size: 14px; opacity: 0.6; animation: floatPass 4s linear infinite; color: var(--active-color); }
-        .f1 { top: -10px; left: 110%; animation-delay: 0s; font-size: 12px; }
-        .f2 { top: 20px; left: 110%; animation-delay: 2s; font-size: 16px; opacity: 0.4; }
-        @keyframes floatPass { from { left: 110%; } to { left: -10%; } }
+        /* 拖尾 (利用遮罩实现渐变圆环) */
+        .orbit-star::before { 
+            content: ''; 
+            position: absolute; 
+            inset: 0; 
+            border-radius: 50%; 
+            padding: 2px; 
+            background: conic-gradient(
+                from 0deg, 
+                transparent 0%, 
+                transparent 40%, 
+                rgba(253, 203, 110, 0.2) 60%, 
+                var(--active-color) 100%
+            );
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            transform: rotate(-15deg); 
+        }
+
+        /* 星星本体 + 撒出的星屑 (Box-shadow) */
+        .orbit-star::after { 
+            content: ''; 
+            position: absolute; 
+            top: 0; left: 50%; 
+            width: 8px; height: 8px; 
+            background: #fdcb6e; 
+            border-radius: 50%; 
+            transform: translate(-50%, -50%); 
+            
+            /* 1. 本体发光 */
+            /* 2. 星屑粒子 (Box-shadow 模拟) */
+            box-shadow: 
+                0 0 10px #fdcb6e, 
+                0 0 20px var(--active-color),
+                /* 粒子1 */
+                -12px 2px 0 -3px rgba(253, 203, 110, 0.6),
+                /* 粒子2 */
+                -22px 6px 0 -4px rgba(253, 203, 110, 0.4),
+                /* 粒子3 */
+                -30px 0px 0 -5px var(--active-color);
+                
+            animation: stardustTwinkle 0.5s infinite alternate;
+        }
         
-        /* Q版二头身像素小人 */
+        @keyframes stardustTwinkle {
+            0% { filter: brightness(1); }
+            100% { filter: brightness(1.3); }
+        }
+
+        /* 删除了 .floater 相关样式 */
+        
         .runner-svg { width: 70px; height: 70px; z-index: 10; position: relative; bottom: 0; filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.1)); }
         .runner-svg path { fill: var(--active-color); }
         
-        /* 修复重影 */
         .run-frame-1, .run-frame-2 { display: none; }
         .bulb-box.frame-1 .run-frame-1 { display: block; }
         .bulb-box.frame-2 .run-frame-2 { display: block; }
 
-        /* V36: 聚能光点 (修复) */
         .particle {
             position: absolute;
             width: 8px; height: 8px;
@@ -138,19 +185,7 @@
             100% { opacity: 0; transform: translate(0, 0) scale(0.2); }
         }
         
-        /* 思考气泡 */
-        .thought-bubble {
-            position: absolute; top: -15px; right: -10px;
-            background: #fff; border: 2px solid var(--active-color);
-            padding: 4px 8px; border-radius: 8px 8px 8px 0;
-            font-size: 10px; font-weight: bold; color: #555;
-            font-family: var(--pixel-font);
-            opacity: 0; transform: scale(0.8);
-            transition: 0.3s; pointer-events: none; z-index: 15;
-            box-shadow: 2px 2px 0 rgba(0,0,0,0.05);
-            white-space: nowrap;
-        }
-        .thought-bubble.show { opacity: 1; transform: scale(1); }
+        /* 删除了 .thought-bubble 相关样式 */
 
         .user-badge { font-size: 14px; font-weight: 900; color: #888; background: rgba(255,255,255,0.6); padding: 6px 16px; border-radius: 20px; margin-bottom: 20px; position: relative; z-index: 2;} 
         .quote-box { min-height: 110px; width: 100%; text-align: center; background: var(--active-bg); border-radius: 16px; padding: 20px 15px; box-sizing: border-box; border-left: 4px solid var(--active-color); position: relative; z-index: 2; transition: 0.3s; opacity: 0; transform: translateY(10px); }
@@ -158,12 +193,11 @@
         .emoji { font-size: 40px; display: block; margin-bottom: 10px; animation: float 3s infinite; }
         .quote-txt { font-size: 17px; color: #444; line-height: 1.7; font-weight: bold; font-family: "Songti SC", sans-serif; }
         
-        /* 布局: 倒L型顶部对齐 */
         .energy-pill { background: rgba(255,255,255,0.8); padding: 6px 14px; border-radius: 20px; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 900; color: #636e72; z-index: 2; cursor: pointer; }
         
         .sidebar-tools { 
             position: absolute; right: 25px; 
-            top: 25px; /* 严格对齐能量条 */
+            top: 25px;
             display: grid; 
             grid-template-columns: repeat(4, 1fr); 
             gap: 10px; z-index: 20; 
@@ -250,12 +284,10 @@
         /* Animations */
         @keyframes spinOrbit { from{transform:rotate(0deg)} to{transform:rotate(360deg)} } @keyframes bulbFlash { 0% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(253, 203, 110, 0)); color: #dfe6e9; } 40% { transform: scale(1.15); filter: drop-shadow(0 0 40px rgba(253, 203, 110, 0.9)); color: #fdcb6e; } 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(253, 203, 110, 0.4)); color: #fdcb6e; } } @keyframes scoreScale { 0%{transform:scale(1)} 50%{transform:scale(1.5)} 100%{transform:scale(1)} } @keyframes floatFlat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-15px)} } @keyframes popUp { from{transform:scale(0.8);opacity:0} to{transform:scale(1);opacity:1} } @keyframes fadeUp { 0%{opacity:0;transform:translate(-50%,20px)} 20%{opacity:1;transform:translate(-50%,0)} 80%{opacity:1} 100%{opacity:0;transform:translate(-50%,-20px)} } @keyframes flyUp { 0%{transform:translate(-50%, -100%); opacity:1} 100%{transform:translate(-50%, -180%); opacity:0} } @keyframes fadeIn { from{opacity:0} to{opacity:1} } @keyframes slideInUp { from{transform:translateY(50px);opacity:0} to{transform:translateY(0);opacity:1} }
         
-        /* 悬浮关闭按钮 */
         .floating-close { position: absolute; right: 20px; top: 20px; z-index: 100; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.9); display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; }
 
-        /* ================= V36: 票根与布局 ================= */
+        /* ================= V37: 票根与布局修正版 ================= */
         
-        /* 1. 输入区域 */
         .input-area { background: #fff; padding: 20px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; }
         .switch-row { display: flex; gap: 10px; margin-bottom: 15px; }
         .switch-btn { flex: 1; padding: 10px; border: none; background: #f0f2f5; border-radius: 10px; font-weight: 900; color: #999; cursor: pointer; transition: 0.2s; }
@@ -266,9 +298,6 @@
         .is-btn.sel { background: var(--active-color); border: 2px solid #fff; box-shadow: 0 0 0 2px var(--active-color); }
         .s-btn { width: 100%; padding: 14px; background: #2d3436; color: #fff; border: none; border-radius: 12px; margin-top: 10px; font-weight: bold; cursor: pointer; }
 
-        /* 2. 列表展示: 视觉分层 */
-        
-        /* (A) 日记 */
         .diary-paper {
             background: var(--paper-color);
             padding: 20px;
@@ -284,65 +313,86 @@
         .diary-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 12px; font-weight: bold; opacity: 0.6; border-bottom: 1px dashed rgba(0,0,0,0.1); padding-bottom: 5px; }
         .diary-footer { display: flex; justify-content: flex-end; margin-top: 10px; font-size: 16px; opacity: 0.8; gap: 5px; }
 
-        /* (B) V36 兑换券: 真·1:1 复刻 (半圆撕口) */
+        /* V37 核心修复: 2:1 横向票根 & 1:1 边缘锯齿 */
         .ticket-stub {
             background: var(--active-color); 
             position: relative;
             margin: 20px auto;
             width: 100%;
-            aspect-ratio: 2/1; /* 2:1 横版 */
+            /* 强制 2:1 比例 */
+            aspect-ratio: 2 / 1; 
+            display: flex;
             filter: drop-shadow(0 4px 5px rgba(0,0,0,0.15));
             font-family: var(--pixel-font);
             color: #fff; 
-            display: flex;
             animation: popUp 0.3s;
             
-            /* V36: 真·邮票/电影票半圆撕裂边缘 (Radial Gradient Mask) */
-            /* 左边孔洞 + 右边孔洞 */
+            /* 1:1 边缘遮罩逻辑 */
+            --mask-size: 20px;
+            --hole-r: 10px; /* 半径 */
+
             mask: 
-                radial-gradient(circle at 0 50%, transparent 6px, black 6.5px) 0 0 / 100% 20px repeat-y,
-                linear-gradient(black, black);
-            -webkit-mask: 
-                radial-gradient(circle at 0 10px, transparent 6px, black 6.5px) -10px 0 / 20px 24px repeat-y,
-                radial-gradient(circle at 100% 10px, transparent 6px, black 6.5px) 10px 0 / 20px 24px repeat-y,
+                /* 左边缘孔洞 */
+                radial-gradient(circle at 0 var(--hole-r), transparent 6px, black 6.5px) -10px 0 / var(--mask-size) var(--mask-size) repeat-y,
+                /* 右边缘孔洞 */
+                radial-gradient(circle at 100% var(--hole-r), transparent 6px, black 6.5px) 10px 0 / var(--mask-size) var(--mask-size) repeat-y,
+                /* 中间内容区域 (填满) */
                 linear-gradient(#000 0 0) content-box;
-            /* 复合遮罩逻辑：左右两排孔洞 */
+                
+            /* 复合模式: 取交集 */
             -webkit-mask-composite: destination-in;
             mask-composite: intersect;
 
-            padding: 5px; 
+            padding: 6px; 
         }
+
         /* 增加纹理质感 */
-        .ticket-stub::before {
+        .ticket-stub::after {
             content: ''; position: absolute; inset: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+            background: radial-gradient(circle at 30% 50%, transparent 0, rgba(0,0,0,0.05) 100%);
             pointer-events: none;
+            z-index: 0;
         }
-        
+
+        /* 左侧副券 (30% 宽度) */
         .stub-left {
-            width: 35%;
-            background: rgba(0,0,0,0.2);
-            border-right: 2px dashed rgba(255,255,255,0.3);
+            width: 30%; /* 经典的票根比例 */
+            background: rgba(0,0,0,0.15); /* 稍微深一点的底色 */
+            border-right: 2px dashed rgba(255,255,255,0.4); /* 撕裂线 */
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             text-align: center;
-            padding-left: 10px; /* 避开孔洞 */
+            padding: 5px;
+            position: relative;
         }
+        
+        /* 模拟撕裂线处的半圆缺口细节 */
+        .stub-left::after {
+            content: ''; position: absolute; right: -6px; top: 0; bottom: 0;
+            width: 10px;
+            background: radial-gradient(circle at center, transparent 3px, transparent 4px);
+            background-size: 10px 10px;
+            opacity: 0.5;
+        }
+
         .stub-right {
-            width: 65%;
-            padding: 10px 15px 10px 10px; /* 右边避开孔洞 */
+            width: 70%;
+            padding: 12px 18px 12px 12px; /* 右侧留白多一点，避开孔洞 */
             display: flex; flex-direction: column;
+            position: relative;
+            z-index: 1;
         }
 
         .zpd-logo {
-            font-size: 24px; font-weight: 900; letter-spacing: 2px;
-            border: 3px solid #fff; padding: 5px 10px;
-            margin-bottom: 10px;
+            font-size: 20px; font-weight: 900; letter-spacing: 2px;
+            border: 2px solid #fff; padding: 2px 6px;
+            margin-bottom: 6px; opacity: 0.9;
         }
         
-        .stub-info-row { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.3); padding: 4px 0; font-size: 10px; font-weight: bold; }
-        .stub-main-txt { flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 14px; font-weight: bold; line-height: 1.3; padding: 5px; }
+        .stub-info-row { display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(255,255,255,0.3); padding: 4px 0; font-size: 10px; font-weight: bold; opacity: 0.9; }
+        .stub-main-txt { flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 15px; font-weight: bold; line-height: 1.4; padding: 8px 0; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
 
-        .item-delete { position: absolute; top: 5px; right: 25px; width: 20px; height: 20px; background: #333; color: #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; font-weight: bold; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10; border: 2px solid #fff; }
+        .item-delete { position: absolute; top: -5px; right: 15px; width: 22px; height: 22px; background: #2d3436; color: #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; font-weight: bold; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10; border: 2px solid #fff; transition: 0.2s;}
+        .item-delete:active { transform: scale(0.9); }
 
         .shop-item-desc { font-size: 10px; color: #999; margin-top: 4px; font-style: italic; }
 
@@ -359,7 +409,7 @@
             <div class="cat-row c-yellow"><div class="cat-label">自由探险 (SP)</div><div class="btn-grid"><button class="detail-btn" onclick="saveUser('ISTP','yellow', this)">ISTP</button><button class="detail-btn" onclick="saveUser('ISFP','yellow', this)">ISFP</button><button class="detail-btn" onclick="saveUser('ESTP','yellow', this)">ESTP</button><button class="detail-btn" onclick="saveUser('ESFP','yellow', this)">ESFP</button></div></div>
             <div class="cat-row c-blue"><div class="cat-label">忠诚守护 (SJ)</div><div class="btn-grid"><button class="detail-btn" onclick="saveUser('ISTJ','blue', this)">ISTJ</button><button class="detail-btn" onclick="saveUser('ISFJ','blue', this)">ISFJ</button><button class="detail-btn" onclick="saveUser('ESTJ','blue', this)">ESTJ</button><button class="detail-btn" onclick="saveUser('ESFJ','blue', this)">ESFJ</button></div></div>
         </div>
-        <div class="footer-logo-p1">王老十六 © WANG16 MBTI V36</div>
+        <div class="footer-logo-p1">王老十六 © WANG16 MBTI V41</div>
     </div>
 
     <div id="welcome-overlay" class="hidden">
@@ -395,13 +445,8 @@
             </div>
             
             <div class="bulb-box frame-1" onmousedown="collectEnergy(event)" ontouchstart="collectEnergy(event)">
-                <div class="floater f1"><i class="fa-solid fa-cloud"></i></div>
-                <div class="floater f2"><i class="fa-solid fa-star"></i></div>
-                
                 <div class="orbit-star"></div>
                 
-                <div class="thought-bubble" id="thoughtBubble">...</div>
-
                 <svg class="runner-svg run-frame-1" viewBox="0 0 32 32">
                    <path d="M8,4 h16 v14 h-16 z" />
                    <path fill="#fff" d="M11,8 h4 v4 h-4 z M19,8 h4 v4 h-4 z" />
@@ -531,25 +576,9 @@
         let user={type:'',color:''}, score=0, wheelData=["行动","等待","求助","放弃"], wheelAngle=0, resetCounter=0;
         let eraserCount = 0; 
 
-        const bubbleTexts = {
-            "INTJ": ["分析中...", "无聊", "...", "计划通"],
-            "INTP": ["为什么?", "zzZ", "发呆", "有趣的BUG"],
-            "ENTJ": ["搞快点", "效率", "听我的", "目标锁定"],
-            "ENTP": ["如果...", "试试看", "嘿嘿", "反驳无效"],
-            "INFJ": ["预感...", "唉", "拯救世界", "想回家"],
-            "INFP": ["今晚吃啥", "emo了", "好美", "不想动"],
-            "ENFJ": ["加油!", "抱抱", "大家开心", "冲鸭"],
-            "ENFP": ["好耶!", "亮闪闪", "看这里", "飞喽"],
-            "ISTJ": ["按规定", "检查", "记录", "别乱动"],
-            "ISFJ": ["喝水吗", "没事吧", "小心", "好的"],
-            "ESTJ": ["执行", "日程表", "别迟到", "标准"],
-            "ESFJ": ["聚餐吗", "聊聊", "真棒", "我也去"],
-            "ISTP": ["拆开看看", "修好了", "麻烦", "走开"],
-            "ISFP": ["画个圈", "听歌", "自由", "风景不错"],
-            "ESTP": ["敢不敢", "梭哈", "走起", "看我操作"],
-            "ESFP": ["Party!", "嗨起来", "关注我", "好好玩"]
-        };
-
+        // 删除了 bubbleTexts 相关的多余文本，因为气泡已删除，但为了不报错保留结构（可选），这里直接删除引用即可。
+        // 但为了 JS 不报错，我们保留变量定义，或者把 showThought 函数清空。
+        
         const typeColors = { 
             green: {main:'#00b894', bg:'#e6fcf5'}, purple: {main:'#9c88ff', bg:'#f3f0ff'}, 
             yellow: {main:'#feca57', bg:'#fffbf0'}, blue: {main:'#0984e3', bg:'#e7f5ff'} 
@@ -591,7 +620,7 @@
             if(!rpgState.relationship) rpgState.relationship = {};
             initGrid();
             startRunner(); 
-            startBubbleLoop(); 
+            // V41: 删除了 startBubbleLoop 调用
         };
 
         // ================= 基础逻辑 =================
@@ -634,24 +663,10 @@
                 else { box.classList.add('frame-2'); box.classList.remove('frame-1'); }
             }, 250); 
         }
-        
-        function startBubbleLoop() {
-            setInterval(() => {
-                if(Math.random() > 0.3) showThought(); 
-            }, 4000);
-        }
-        function showThought() {
-            const list = bubbleTexts[user.type] || ["..."];
-            const txt = list[Math.floor(Math.random()*list.length)];
-            const b = document.getElementById('thoughtBubble');
-            b.innerText = txt;
-            b.classList.add('show');
-            setTimeout(() => b.classList.remove('show'), 2000);
-        }
 
         function collectEnergy(e){
             if(e) { e.preventDefault(); e.stopPropagation(); }
-            createParticle(e); // V36: 触发聚能动画
+            createParticle(e);
             
             const lastTime = parseInt(localStorage.getItem('w16_last_collect') || 0);
             const now = Date.now();
@@ -678,7 +693,6 @@
             if(navigator.vibrate) navigator.vibrate(50);
         }
 
-        // V36: 修复聚能粒子生成逻辑
         function createParticle(e) {
             const box = document.querySelector('.bulb-box');
             for(let i=0; i<8; i++) {
@@ -798,7 +812,7 @@
             openShop(); 
         }
 
-        // --- V36: 票根渲染 (真·半圆撕裂边缘) ---
+        // --- V37: 票根渲染逻辑 (JS 适配新的 CSS 结构) ---
         function openDiary() {
             document.getElementById('diary-overlay').classList.remove('hidden');
             renderTickets('all');
@@ -882,7 +896,7 @@
                         </div>
                     `;
                 } else {
-                    // V36: 真·1:1 复刻兑换券
+                    // V37: 适配新的 2:1 横向票根结构
                     div.className = 'ticket-stub'; 
                     div.innerHTML = `
                         ${deleteBtn}
@@ -896,7 +910,7 @@
                                 <span>${t.date}</span>
                             </div>
                             <div class="stub-main-txt">${t.content}</div>
-                            <div class="stub-info-row" style="margin-top:auto;border-top:1px solid rgba(255,255,255,0.3);border-bottom:none;padding-top:4px;">
+                            <div class="stub-info-row" style="margin-top:auto;border-top:1px dashed rgba(255,255,255,0.3);border-bottom:none;padding-top:4px;">
                                 <span>MOOD: ${t.mood}</span>
                                 <span>SIGNED: ${t.mbti}</span>
                             </div>
