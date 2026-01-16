@@ -46,7 +46,7 @@
         /* P2: 主页 */
         #main-page { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden; }
         
-        /* V34 核心：柔光呼吸背景 (无硬线条) */
+        /* V35: 柔光呼吸背景 (无硬线条) */
         .converge-bg {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 100%; height: 100%; z-index: 0; pointer-events: none;
@@ -74,36 +74,76 @@
         .heal-card { width: 85%; max-width: 360px; height: 500px; background: rgba(255,255,255,0.85); backdrop-filter: blur(30px); border-radius: 30px; padding: 25px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; border: 1px solid rgba(255,255,255,0.8); position: relative; overflow: visible; z-index: 10; }
         .card-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; position: relative; z-index: 2; }
         
-        /* V34: 小人容器 (无地面) */
+        /* V35: 小人容器固定 140x140，确保所有特效居中 */
         .bulb-box { 
-            height: 140px; width: 100%; 
+            width: 140px; height: 140px;
             display: flex; justify-content: center; align-items: center; 
             margin: 10px 0; position: relative; cursor: pointer; 
-            overflow: visible;
+            overflow: visible; /* 允许光点溢出 */
         }
         
+        /* V35: 修复星轨 (锁死居中，颜色加深) */
+        .orbit-star { 
+            position: absolute; 
+            top: 0; left: 0; right: 0; bottom: 0; /* 撑满 140x140 */
+            border-radius: 50%; 
+            border: 2px dashed rgba(0,0,0,0.2); /* V35: 加深可见度 */
+            animation: spinOrbit 10s linear infinite; 
+            pointer-events: none; 
+        }
+        .orbit-star::before { 
+            content: ''; position: absolute; top: -4px; left: 50%; 
+            width: 8px; height: 8px; background: #fdcb6e; 
+            border-radius: 50%; transform: translateX(-50%); 
+            box-shadow: 0 0 10px #fdcb6e; 
+        }
+
         /* 漂浮的云朵/星星 */
         .floater { position: absolute; font-size: 14px; opacity: 0.6; animation: floatPass 4s linear infinite; color: var(--active-color); }
         .f1 { top: -10px; left: 110%; animation-delay: 0s; font-size: 12px; }
         .f2 { top: 20px; left: 110%; animation-delay: 2s; font-size: 16px; opacity: 0.4; }
         @keyframes floatPass { from { left: 110%; } to { left: -10%; } }
-
-        /* 旋转星轨 */
-        .orbit-star { position: absolute; top:50%; left:50%; transform:translate(-50%,-50%); width: 140px; height: 140px; border-radius: 50%; border: 2px dashed rgba(0,0,0,0.05); animation: spinOrbit 10s linear infinite; pointer-events: none; }
-        .orbit-star::before { content: ''; position: absolute; top: -4px; left: 50%; width: 8px; height: 8px; background: #fdcb6e; border-radius: 50%; transform: translateX(-50%); box-shadow: 0 0 10px #fdcb6e; }
         
-        /* V34: Q版二头身像素小人 (重绘) */
+        /* V34: Q版二头身像素小人 */
         .runner-svg { width: 70px; height: 70px; z-index: 10; position: relative; bottom: 0; filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.1)); }
         .runner-svg path { fill: var(--active-color); }
         
-        /* 修复重影: 默认隐藏所有，JS控制显示 */
+        /* 修复重影 */
         .run-frame-1, .run-frame-2 { display: none; }
         .bulb-box.frame-1 .run-frame-1 { display: block; }
         .bulb-box.frame-2 .run-frame-2 { display: block; }
+
+        /* V35: 聚能光点 (修复动画丢失问题) */
+        .particle {
+            position: absolute;
+            width: 8px; height: 8px;
+            background: var(--active-color);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 20;
+            top: 50%; left: 50%; /* 起点在中心 */
+            margin-top: -4px; margin-left: -4px;
+        }
+        
+        /* V35: 吸入动画 (从远处向中心汇聚) */
+        @keyframes suckIn {
+            0% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(0.5); /* 从远处开始 */
+            }
+            20% {
+                opacity: 1;
+                transform: translate(var(--tx), var(--ty)) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(0, 0) scale(0.2); /* 汇聚到中心 */
+            }
+        }
         
         /* 思考气泡 */
         .thought-bubble {
-            position: absolute; top: -10px; right: 20px;
+            position: absolute; top: -15px; right: -10px;
             background: #fff; border: 2px solid var(--active-color);
             padding: 4px 8px; border-radius: 8px 8px 8px 0;
             font-size: 10px; font-weight: bold; color: #555;
@@ -121,7 +161,7 @@
         .emoji { font-size: 40px; display: block; margin-bottom: 10px; animation: float 3s infinite; }
         .quote-txt { font-size: 17px; color: #444; line-height: 1.7; font-weight: bold; font-family: "Songti SC", sans-serif; }
         
-        /* V34: 布局修复 (顶部对齐) */
+        /* V35: 布局修复 (顶部对齐) */
         .energy-pill { background: rgba(255,255,255,0.8); padding: 6px 14px; border-radius: 20px; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 900; color: #636e72; z-index: 2; cursor: pointer; }
         
         .sidebar-tools { 
@@ -132,13 +172,8 @@
             gap: 10px; z-index: 20; 
             width: auto;
         }
-        /* 第一行按钮 */
         .btn-row-1 { grid-column: auto; }
-        /* 第二行竖排 (强行换行并靠右) */
-        .btn-col-2 { 
-            grid-column: 4; /* 放在第4列(转盘)下方 */
-            margin-top: 0px; 
-        }
+        .btn-col-2 { grid-column: 4; margin-top: 0px; }
 
         .side-btn { width: 38px; height: 38px; border-radius: 12px; background: rgba(255,255,255,0.9); border: 1px solid rgba(0,0,0,0.05); color: #555; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); transition: 0.2s; }
         .side-btn:active { transform: scale(0.9); }
@@ -221,7 +256,7 @@
         /* 悬浮关闭按钮 */
         .floating-close { position: absolute; right: 20px; top: 20px; z-index: 100; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.9); display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; }
 
-        /* ================= V34: 票根与布局 ================= */
+        /* ================= V35: 票根与布局 ================= */
         
         /* 1. 输入区域 */
         .input-area { background: #fff; padding: 20px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; }
@@ -236,7 +271,7 @@
 
         /* 2. 列表展示: 视觉分层 */
         
-        /* (A) 日记: 泛黄旧纸张 */
+        /* (A) 日记 */
         .diary-paper {
             background: var(--paper-color);
             padding: 20px;
@@ -252,97 +287,62 @@
         .diary-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 12px; font-weight: bold; opacity: 0.6; border-bottom: 1px dashed rgba(0,0,0,0.1); padding-bottom: 5px; }
         .diary-footer { display: flex; justify-content: flex-end; margin-top: 10px; font-size: 16px; opacity: 0.8; gap: 5px; }
 
-        /* (B) V34 兑换券: 像素化 ZPD 罚单 */
+        /* (B) V35 兑换券: 横版 2:1 真·像素风 */
         .ticket-stub {
-            background: var(--active-color); /* V34: 动态跟随人格色 */
+            background: var(--active-color); 
             position: relative;
             margin: 20px auto;
-            width: 90%;
-            aspect-ratio: 1/2; /* V34: 1:2 瘦长比例 */
+            width: 100%;
+            aspect-ratio: 2/1; /* V35: 横版 2:1 */
             filter: drop-shadow(0 4px 5px rgba(0,0,0,0.15));
             font-family: var(--pixel-font);
             color: #fff; 
             display: flex;
-            flex-direction: column;
-            padding: 0;
             animation: popUp 0.3s;
+            
+            /* 真·马赛克锯齿边缘 (CSS Mask) */
+            --s: 10px; /* 锯齿大小 */
+            mask: 
+                conic-gradient(#0000 0 0) 50%/calc(100% - var(--s)) calc(100% - var(--s)),
+                linear-gradient(#000 0 0) content-box;
+            -webkit-mask: 
+                conic-gradient(#0000 0 0) 50%/calc(100% - var(--s)) calc(100% - var(--s)),
+                linear-gradient(#000 0 0) content-box;
+            mask-repeat: no-repeat;
+            -webkit-mask-repeat: no-repeat;
+            
+            padding: 5px; /* 留出边缘 */
         }
-        
-        /* 方形像素锯齿 (底部) */
-        .ticket-stub::after {
-            content: "";
-            position: absolute;
-            left: 0;
-            bottom: -10px;
-            width: 100%;
-            height: 10px;
-            background: 
-                linear-gradient(45deg, transparent 33.333%, var(--active-color) 33.333%, var(--active-color) 66.667%, transparent 66.667%),
-                linear-gradient(-45deg, transparent 33.333%, var(--active-color) 33.333%, var(--active-color) 66.667%, transparent 66.667%);
+        /* 左右锯齿装饰 */
+        .ticket-stub::before, .ticket-stub::after {
+            content: ''; position: absolute; width: 8px; height: 100%; top:0; 
             background-size: 10px 20px;
-            background-repeat: repeat-x;
+            background-repeat: repeat-y;
         }
-
-        .stub-top-bar {
-            background: #2d3436; /* 黑色头部 */
+        
+        .stub-left {
+            width: 35%;
+            background: rgba(0,0,0,0.2);
+            border-right: 2px dashed rgba(255,255,255,0.3);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center;
+        }
+        .stub-right {
+            width: 65%;
             padding: 10px;
-            text-align: center;
-            font-size: 18px;
-            font-weight: 900;
-            letter-spacing: 2px;
-            border-bottom: 2px solid #000;
+            display: flex; flex-direction: column;
         }
-        
-        /* 黑色粗线表格 */
-        .stub-grid {
-            border: 2px solid #000;
-            background: rgba(255,255,255,0.9); /* 白色背景内容区 */
-            margin: 10px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            color: #000;
-        }
-        .stub-row-item {
-            display: flex;
-            border-bottom: 2px solid #000;
-            min-height: 30px;
-        }
-        .stub-row-item:last-child { border-bottom: none; }
-        .stub-label {
-            background: #e0e0e0;
-            padding: 8px;
-            width: 70px;
-            font-size: 12px;
-            font-weight: 900;
-            display: flex; align-items: center; justify-content: center;
-            border-right: 2px solid #000;
-        }
-        .stub-val {
-            padding: 8px;
-            font-size: 14px;
-            font-weight: bold;
-            flex: 1;
-            display: flex; align-items: center;
-            word-break: break-all;
-        }
-        
-        .stub-content-box {
-            padding: 15px;
-            text-align: center;
-            font-size: 16px;
-            font-weight: bold;
-            line-height: 1.5;
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-bottom: 2px solid #000;
-        }
-        
-        .stub-barcode { height: 40px; width: 90%; margin: 10px auto; background: repeating-linear-gradient(90deg, #000 0, #000 2px, transparent 2px, transparent 4px, #000 4px, #000 6px); }
 
-        .item-delete { position: absolute; top: -10px; right: -10px; width: 24px; height: 24px; background: #333; color: #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; font-weight: bold; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10; border: 2px solid #fff; }
+        .zpd-logo {
+            font-size: 24px; font-weight: 900; letter-spacing: 2px;
+            border: 3px solid #fff; padding: 5px 10px;
+            margin-bottom: 10px;
+        }
+        
+        .stub-info-row { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.3); padding: 4px 0; font-size: 10px; font-weight: bold; }
+        .stub-main-txt { flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 14px; font-weight: bold; line-height: 1.3; padding: 5px; }
+
+        .item-delete { position: absolute; top: -5px; right: -5px; width: 20px; height: 20px; background: #333; color: #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; font-weight: bold; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10; border: 2px solid #fff; }
 
         .shop-item-desc { font-size: 10px; color: #999; margin-top: 4px; font-style: italic; }
 
@@ -359,7 +359,7 @@
             <div class="cat-row c-yellow"><div class="cat-label">自由探险 (SP)</div><div class="btn-grid"><button class="detail-btn" onclick="saveUser('ISTP','yellow', this)">ISTP</button><button class="detail-btn" onclick="saveUser('ISFP','yellow', this)">ISFP</button><button class="detail-btn" onclick="saveUser('ESTP','yellow', this)">ESTP</button><button class="detail-btn" onclick="saveUser('ESFP','yellow', this)">ESFP</button></div></div>
             <div class="cat-row c-blue"><div class="cat-label">忠诚守护 (SJ)</div><div class="btn-grid"><button class="detail-btn" onclick="saveUser('ISTJ','blue', this)">ISTJ</button><button class="detail-btn" onclick="saveUser('ISFJ','blue', this)">ISFJ</button><button class="detail-btn" onclick="saveUser('ESTJ','blue', this)">ESTJ</button><button class="detail-btn" onclick="saveUser('ESFJ','blue', this)">ESFJ</button></div></div>
         </div>
-        <div class="footer-logo-p1">王老十六 © WANG16 MBTI V34</div>
+        <div class="footer-logo-p1">王老十六 © WANG16 MBTI V35</div>
     </div>
 
     <div id="welcome-overlay" class="hidden">
@@ -531,7 +531,6 @@
         let user={type:'',color:''}, score=0, wheelData=["行动","等待","求助","放弃"], wheelAngle=0, resetCounter=0;
         let eraserCount = 0; 
 
-        // 气泡语录
         const bubbleTexts = {
             "INTJ": ["分析中...", "无聊", "...", "计划通"],
             "INTP": ["为什么?", "zzZ", "发呆", "有趣的BUG"],
@@ -567,7 +566,6 @@
         let currentTarget = "";
         const COOLDOWN_TIME = 60 * 60 * 1000; 
         
-        // UID 生成
         let userUid = localStorage.getItem('w16_uid');
         if(!userUid) { userUid = '#'+Math.floor(1000+Math.random()*9000); localStorage.setItem('w16_uid', userUid); }
 
@@ -653,7 +651,7 @@
 
         function collectEnergy(e){
             if(e) { e.preventDefault(); e.stopPropagation(); }
-            createParticle(e);
+            createParticle(e); // V35: 触发聚能动画
             
             const lastTime = parseInt(localStorage.getItem('w16_last_collect') || 0);
             const now = Date.now();
@@ -680,22 +678,30 @@
             if(navigator.vibrate) navigator.vibrate(50);
         }
 
+        // V35: 修复聚能粒子生成逻辑
         function createParticle(e) {
             const box = document.querySelector('.bulb-box');
             for(let i=0; i<8; i++) {
                 const p = document.createElement('div'); p.className = 'particle';
-                const randX = (Math.random() - 0.5) * 200 + 'px';
-                const randY = (Math.random() - 0.5) * 200 + 'px';
-                p.style.setProperty('--tx', randX); p.style.setProperty('--ty', randY);
-                p.style.left = '50%'; p.style.top = '50%';
-                p.style.animation = `suckIn 0.8s ease-in forwards`;
-                box.appendChild(p); setTimeout(()=>p.remove(), 800);
+                // 随机从四周飞入
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 60 + Math.random() * 40; // 距离中心 60-100px
+                const tx = Math.cos(angle) * distance + 'px';
+                const ty = Math.sin(angle) * distance + 'px';
+                
+                p.style.setProperty('--tx', tx); 
+                p.style.setProperty('--ty', ty);
+                
+                // V35: 设定吸入动画
+                p.style.animation = `suckIn 0.6s ease-out forwards`;
+                
+                box.appendChild(p); 
+                setTimeout(()=>p.remove(), 600);
             }
         }
 
         function updateUI(animate = false){ const s = document.getElementById('scoreDisplay'); s.innerText = score; if(animate) { s.classList.remove('score-pop'); void s.offsetWidth; s.classList.add('score-pop'); } }
         
-        // V34: 气泡提示 (替代 alert)
         function showToast(msg) { 
             const old = document.querySelector('.toast-msg'); if(old) old.remove(); 
             const t = document.createElement('div'); t.className = 'toast-msg'; t.innerText = msg; 
@@ -778,7 +784,6 @@
         function buyItem(id) {
             const item = shopItems.find(i => i.id === id);
             if(score < item.price) { showToast("能量不足！"); return; }
-            // V34: 使用自定义 confirm 替代? 为了简化，这里保留 confirm 询问，但成功后用 toast
             if(!confirm(`确认消耗 ${item.price} 能量购买 [${item.name}] 吗？`)) return;
             
             score -= item.price;
@@ -796,7 +801,7 @@
             openShop(); 
         }
 
-        // --- V34: 票根渲染 ---
+        // --- V35: 票根渲染 (横版 2:1 像素风) ---
         function openDiary() {
             document.getElementById('diary-overlay').classList.remove('hidden');
             renderTickets('all');
@@ -831,7 +836,7 @@
             document.getElementById('ticket-content').value = "";
             renderTickets('all');
             score += 2; localStorage.setItem('w16_score', score); updateUI();
-            showToast("已保存！能量 +2"); // V34: 气泡提示
+            showToast("已保存！能量 +2");
         }
         
         function deleteTicket(id) {
@@ -867,7 +872,6 @@
                 }
 
                 if (t.type === 'diary') {
-                    // 日记: 怀旧信纸
                     div.className = 'diary-paper';
                     div.innerHTML = `
                         ${deleteBtn}
@@ -881,31 +885,25 @@
                         </div>
                     `;
                 } else {
-                    // V34 兑换券: ZPD 像素风
+                    // V35 兑换券: 横版 2:1 像素 ZPD 风格
                     div.className = 'ticket-stub'; 
                     div.innerHTML = `
                         ${deleteBtn}
-                        <div class="stub-top-bar">ZPD 兑换券</div>
-                        <div class="stub-grid">
-                            <div class="stub-row-item">
-                                <div class="stub-label">编号</div>
-                                <div class="stub-val" style="font-family:'Courier New'">#${t.id.toString().slice(-6)}</div>
+                        <div class="stub-left">
+                            <div class="zpd-logo">ZPD</div>
+                            <div class="stub-info-row" style="border:none;">OFFICIAL</div>
+                        </div>
+                        <div class="stub-right">
+                            <div class="stub-info-row">
+                                <span>NO.${t.id.toString().slice(-6)}</span>
+                                <span>${t.date}</span>
                             </div>
-                            <div class="stub-row-item">
-                                <div class="stub-label">日期</div>
-                                <div class="stub-val">${t.date}</div>
-                            </div>
-                            <div class="stub-content-box">${t.content}</div>
-                            <div class="stub-row-item">
-                                <div class="stub-label">心情</div>
-                                <div class="stub-val">${t.mood}</div>
-                            </div>
-                            <div class="stub-row-item">
-                                <div class="stub-label">签署</div>
-                                <div class="stub-val">${t.mbti}</div>
+                            <div class="stub-main-txt">${t.content}</div>
+                            <div class="stub-info-row" style="margin-top:auto;border-top:1px solid rgba(255,255,255,0.3);border-bottom:none;padding-top:4px;">
+                                <span>MOOD: ${t.mood}</span>
+                                <span>SIGNED: ${t.mbti}</span>
                             </div>
                         </div>
-                        <div style="margin-top:0;"><div class="stub-barcode"></div></div>
                     `;
                 }
                 list.appendChild(div); 
