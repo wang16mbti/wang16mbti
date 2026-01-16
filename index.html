@@ -22,11 +22,8 @@
             --paper-color: #fdf6e3; 
         }
         
-        /* V41: 修复 iOS 垂直居中偏上的问题 */
-        html { height: 100%; height: -webkit-fill-available; }
         body { 
             margin: 0; padding: 0; 
-            height: 100%; height: -webkit-fill-available; /* 关键修复 */
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
             overflow: hidden; 
             background: #fff; 
@@ -62,8 +59,19 @@
         .c-green .detail-btn { background: var(--green); } .c-purple .detail-btn { background: var(--purple); } .c-yellow .detail-btn { background: var(--yellow); } .c-blue .detail-btn { background: var(--blue); }
         .footer-logo-p1 { text-align: center; margin-top: 30px; font-size: 12px; font-weight: bold; color: #b2bec3; z-index: 2;}
 
-        /* P2: 主页 */
-        #main-page { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden; }
+        /* P2: 主页 - V42 绝对居中修正版 */
+        #main-page { 
+            position: fixed; /* 强制固定 */
+            inset: 0;        /* 撑满屏幕 */
+            width: 100vw;
+            height: 100dvh;  /* V42 核心: 使用动态视口高度，自动减去地址栏高度 */
+            display: flex; 
+            flex-direction: column;
+            justify-content: center; /* 垂直居中 */
+            align-items: center;     /* 水平居中 */
+            overflow: hidden; 
+            z-index: 100;
+        }
         
         .converge-bg {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -89,7 +97,19 @@
         .bg-orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.6; z-index: -1; transition: background 1s ease; animation: floatOrb 10s infinite ease-in-out; } 
         
         /* 卡片主体 */
-        .heal-card { width: 85%; max-width: 360px; height: 500px; background: rgba(255,255,255,0.85); backdrop-filter: blur(30px); border-radius: 30px; padding: 25px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; border: 1px solid rgba(255,255,255,0.8); position: relative; overflow: visible; z-index: 10; }
+        .heal-card { 
+            width: 85%; max-width: 360px; height: 500px; 
+            background: rgba(255,255,255,0.85); backdrop-filter: blur(30px); 
+            border-radius: 30px; padding: 25px; 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1); 
+            display: flex; flex-direction: column; align-items: center; 
+            border: 1px solid rgba(255,255,255,0.8); 
+            position: relative; overflow: visible; z-index: 10;
+            
+            /* V42 视觉修正: 稍微向下偏移 15px，抵消视觉上的"偏上"感 */
+            transform: translateY(15px);
+        }
+
         .card-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; position: relative; z-index: 2; }
         
         .bulb-box { 
@@ -99,7 +119,7 @@
             overflow: visible; 
         }
         
-        /* V41: 流星拖尾 + 星屑特效 */
+        /* 流星拖尾 + 星屑特效 */
         .orbit-star { 
             position: absolute; 
             inset: 0; 
@@ -109,7 +129,7 @@
             z-index: 1; 
         }
 
-        /* 拖尾 (利用遮罩实现渐变圆环) */
+        /* 拖尾 */
         .orbit-star::before { 
             content: ''; 
             position: absolute; 
@@ -130,7 +150,7 @@
             transform: rotate(-15deg); 
         }
 
-        /* 星星本体 + 撒出的星屑 (Box-shadow) */
+        /* 星星本体 + 撒出的星屑 */
         .orbit-star::after { 
             content: ''; 
             position: absolute; 
@@ -140,16 +160,11 @@
             border-radius: 50%; 
             transform: translate(-50%, -50%); 
             
-            /* 1. 本体发光 */
-            /* 2. 星屑粒子 (Box-shadow 模拟) */
             box-shadow: 
                 0 0 10px #fdcb6e, 
                 0 0 20px var(--active-color),
-                /* 粒子1 */
                 -12px 2px 0 -3px rgba(253, 203, 110, 0.6),
-                /* 粒子2 */
                 -22px 6px 0 -4px rgba(253, 203, 110, 0.4),
-                /* 粒子3 */
                 -30px 0px 0 -5px var(--active-color);
                 
             animation: stardustTwinkle 0.5s infinite alternate;
@@ -159,8 +174,6 @@
             0% { filter: brightness(1); }
             100% { filter: brightness(1.3); }
         }
-
-        /* 删除了 .floater 相关样式 */
         
         .runner-svg { width: 70px; height: 70px; z-index: 10; position: relative; bottom: 0; filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.1)); }
         .runner-svg path { fill: var(--active-color); }
@@ -184,8 +197,6 @@
             20% { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(1); }
             100% { opacity: 0; transform: translate(0, 0) scale(0.2); }
         }
-        
-        /* 删除了 .thought-bubble 相关样式 */
 
         .user-badge { font-size: 14px; font-weight: 900; color: #888; background: rgba(255,255,255,0.6); padding: 6px 16px; border-radius: 20px; margin-bottom: 20px; position: relative; z-index: 2;} 
         .quote-box { min-height: 110px; width: 100%; text-align: center; background: var(--active-bg); border-radius: 16px; padding: 20px 15px; box-sizing: border-box; border-left: 4px solid var(--active-color); position: relative; z-index: 2; transition: 0.3s; opacity: 0; transform: translateY(10px); }
@@ -210,7 +221,13 @@
         .side-btn:active { transform: scale(0.9); }
         
         .btn-collect { background: var(--active-color); color: #fff; width: 100%; padding: 16px; border: none; border-radius: 16px; font-weight: bold; margin-top: 20px; font-size: 15px; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.15); z-index: 2; }
-        .footer-logo-shadow { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); color: rgba(0,0,0,0.3); font-size: 12px; font-weight: 900; cursor: pointer; z-index: 9999; padding: 15px; }
+        
+        /* V42 修正: Footer 绝对定位到底部，避免占据 Flex 空间 */
+        .footer-logo-shadow { 
+            position: absolute; /* 改为 absolute 相对于 main-page */
+            bottom: 25px; left: 50%; transform: translateX(-50%); 
+            color: rgba(0,0,0,0.3); font-size: 12px; font-weight: 900; cursor: pointer; z-index: 99; padding: 15px; 
+        }
 
         /* P4: RPG */
         #game-layer { position: fixed; inset: 0; z-index: 1100; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; }
@@ -409,7 +426,7 @@
             <div class="cat-row c-yellow"><div class="cat-label">自由探险 (SP)</div><div class="btn-grid"><button class="detail-btn" onclick="saveUser('ISTP','yellow', this)">ISTP</button><button class="detail-btn" onclick="saveUser('ISFP','yellow', this)">ISFP</button><button class="detail-btn" onclick="saveUser('ESTP','yellow', this)">ESTP</button><button class="detail-btn" onclick="saveUser('ESFP','yellow', this)">ESFP</button></div></div>
             <div class="cat-row c-blue"><div class="cat-label">忠诚守护 (SJ)</div><div class="btn-grid"><button class="detail-btn" onclick="saveUser('ISTJ','blue', this)">ISTJ</button><button class="detail-btn" onclick="saveUser('ISFJ','blue', this)">ISFJ</button><button class="detail-btn" onclick="saveUser('ESTJ','blue', this)">ESTJ</button><button class="detail-btn" onclick="saveUser('ESFJ','blue', this)">ESFJ</button></div></div>
         </div>
-        <div class="footer-logo-p1">王老十六 © WANG16 MBTI V41</div>
+        <div class="footer-logo-p1">王老十六 © WANG16 MBTI V42</div>
     </div>
 
     <div id="welcome-overlay" class="hidden">
@@ -465,6 +482,7 @@
             <div class="quote-box" id="quoteArea"><div class="emoji" id="emojiDisplay">✨</div><div class="quote-txt" id="textDisplay">...</div></div>
             <button class="btn-collect" id="collectBtn" onmousedown="collectEnergy(event)" ontouchstart="collectEnergy(event)">收集能量 (+1)</button>
         </div>
+        
         <div class="footer-logo-shadow" id="resetBtn" onmousedown="resetCheck(event)" ontouchstart="resetCheck(event)">王老十六 © WANG16 MBTI</div>
     </div>
 
@@ -575,9 +593,6 @@
         // ================= 数据定义 =================
         let user={type:'',color:''}, score=0, wheelData=["行动","等待","求助","放弃"], wheelAngle=0, resetCounter=0;
         let eraserCount = 0; 
-
-        // 删除了 bubbleTexts 相关的多余文本，因为气泡已删除，但为了不报错保留结构（可选），这里直接删除引用即可。
-        // 但为了 JS 不报错，我们保留变量定义，或者把 showThought 函数清空。
         
         const typeColors = { 
             green: {main:'#00b894', bg:'#e6fcf5'}, purple: {main:'#9c88ff', bg:'#f3f0ff'}, 
@@ -620,7 +635,6 @@
             if(!rpgState.relationship) rpgState.relationship = {};
             initGrid();
             startRunner(); 
-            // V41: 删除了 startBubbleLoop 调用
         };
 
         // ================= 基础逻辑 =================
