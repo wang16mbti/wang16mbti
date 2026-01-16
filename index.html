@@ -24,6 +24,14 @@
         body { margin: 0; padding: 0; height: 100vh; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow: hidden; background: #fff; -webkit-user-select: none; user-select: none; }
         .hidden { display: none !important; }
 
+        /* V36: 全局氛围滤镜 (让背景染上人格色) */
+        #main-page::before {
+            content: ''; position: absolute; inset: 0;
+            background: var(--active-color);
+            opacity: 0.08; /* 全局淡淡的染色 */
+            pointer-events: none; z-index: 0;
+        }
+
         /* P1: 选人界面 */
         #select-page { position: fixed; inset: 0; z-index: 900; background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); display: flex; flex-direction: column; padding: 20px; justify-content: center; overflow: hidden; }
         .dopa-bg { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
@@ -46,25 +54,25 @@
         /* P2: 主页 */
         #main-page { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden; }
         
-        /* V35: 柔光呼吸背景 (无硬线条) */
+        /* V36: 强氛围呼吸背景 */
         .converge-bg {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 100%; height: 100%; z-index: 0; pointer-events: none;
         }
         .soft-glow {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 150vmax; height: 150vmax;
-            background: radial-gradient(circle, transparent 30%, var(--active-color) 90%);
+            width: 160vmax; height: 160vmax;
+            background: radial-gradient(circle, transparent 20%, var(--active-color) 85%);
             opacity: 0;
             border-radius: 50%;
             animation: breatheGlow 5s infinite ease-in-out;
-            filter: blur(40px);
+            filter: blur(50px);
         }
-        .soft-glow:nth-child(2) { animation-delay: 2.5s; width: 120vmax; height: 120vmax; }
+        .soft-glow:nth-child(2) { animation-delay: 2.5s; width: 130vmax; height: 130vmax; }
 
         @keyframes breatheGlow {
             0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
-            50% { opacity: 0.15; }
+            50% { opacity: 0.5; } /* V36: 极大提升可见度 (0.15 -> 0.5) */
             100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0; }
         }
 
@@ -74,20 +82,20 @@
         .heal-card { width: 85%; max-width: 360px; height: 500px; background: rgba(255,255,255,0.85); backdrop-filter: blur(30px); border-radius: 30px; padding: 25px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; border: 1px solid rgba(255,255,255,0.8); position: relative; overflow: visible; z-index: 10; }
         .card-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; position: relative; z-index: 2; }
         
-        /* V35: 小人容器固定 140x140，确保所有特效居中 */
+        /* 小人容器 (固定 140x140 确保特效居中) */
         .bulb-box { 
             width: 140px; height: 140px;
             display: flex; justify-content: center; align-items: center; 
             margin: 10px 0; position: relative; cursor: pointer; 
-            overflow: visible; /* 允许光点溢出 */
+            overflow: visible; 
         }
         
-        /* V35: 修复星轨 (锁死居中，颜色加深) */
+        /* V36: 修复星轨 (完美居中, 颜色加深) */
         .orbit-star { 
             position: absolute; 
-            top: 0; left: 0; right: 0; bottom: 0; /* 撑满 140x140 */
+            top: 0; left: 0; right: 0; bottom: 0; 
             border-radius: 50%; 
-            border: 2px dashed rgba(0,0,0,0.2); /* V35: 加深可见度 */
+            border: 2px dashed rgba(0,0,0,0.25); /* 加深星轨 */
             animation: spinOrbit 10s linear infinite; 
             pointer-events: none; 
         }
@@ -104,7 +112,7 @@
         .f2 { top: 20px; left: 110%; animation-delay: 2s; font-size: 16px; opacity: 0.4; }
         @keyframes floatPass { from { left: 110%; } to { left: -10%; } }
         
-        /* V34: Q版二头身像素小人 */
+        /* Q版二头身像素小人 */
         .runner-svg { width: 70px; height: 70px; z-index: 10; position: relative; bottom: 0; filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.1)); }
         .runner-svg path { fill: var(--active-color); }
         
@@ -113,7 +121,7 @@
         .bulb-box.frame-1 .run-frame-1 { display: block; }
         .bulb-box.frame-2 .run-frame-2 { display: block; }
 
-        /* V35: 聚能光点 (修复动画丢失问题) */
+        /* V36: 聚能光点 (修复) */
         .particle {
             position: absolute;
             width: 8px; height: 8px;
@@ -121,24 +129,13 @@
             border-radius: 50%;
             pointer-events: none;
             z-index: 20;
-            top: 50%; left: 50%; /* 起点在中心 */
+            top: 50%; left: 50%; 
             margin-top: -4px; margin-left: -4px;
         }
-        
-        /* V35: 吸入动画 (从远处向中心汇聚) */
         @keyframes suckIn {
-            0% {
-                opacity: 0;
-                transform: translate(var(--tx), var(--ty)) scale(0.5); /* 从远处开始 */
-            }
-            20% {
-                opacity: 1;
-                transform: translate(var(--tx), var(--ty)) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translate(0, 0) scale(0.2); /* 汇聚到中心 */
-            }
+            0% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.5); }
+            20% { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(1); }
+            100% { opacity: 0; transform: translate(0, 0) scale(0.2); }
         }
         
         /* 思考气泡 */
@@ -161,7 +158,7 @@
         .emoji { font-size: 40px; display: block; margin-bottom: 10px; animation: float 3s infinite; }
         .quote-txt { font-size: 17px; color: #444; line-height: 1.7; font-weight: bold; font-family: "Songti SC", sans-serif; }
         
-        /* V35: 布局修复 (顶部对齐) */
+        /* 布局: 倒L型顶部对齐 */
         .energy-pill { background: rgba(255,255,255,0.8); padding: 6px 14px; border-radius: 20px; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 900; color: #636e72; z-index: 2; cursor: pointer; }
         
         .sidebar-tools { 
@@ -256,7 +253,7 @@
         /* 悬浮关闭按钮 */
         .floating-close { position: absolute; right: 20px; top: 20px; z-index: 100; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.9); display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; }
 
-        /* ================= V35: 票根与布局 ================= */
+        /* ================= V36: 票根与布局 ================= */
         
         /* 1. 输入区域 */
         .input-area { background: #fff; padding: 20px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; }
@@ -287,37 +284,39 @@
         .diary-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 12px; font-weight: bold; opacity: 0.6; border-bottom: 1px dashed rgba(0,0,0,0.1); padding-bottom: 5px; }
         .diary-footer { display: flex; justify-content: flex-end; margin-top: 10px; font-size: 16px; opacity: 0.8; gap: 5px; }
 
-        /* (B) V35 兑换券: 横版 2:1 真·像素风 */
+        /* (B) V36 兑换券: 真·1:1 复刻 (半圆撕口) */
         .ticket-stub {
             background: var(--active-color); 
             position: relative;
             margin: 20px auto;
             width: 100%;
-            aspect-ratio: 2/1; /* V35: 横版 2:1 */
+            aspect-ratio: 2/1; /* 2:1 横版 */
             filter: drop-shadow(0 4px 5px rgba(0,0,0,0.15));
             font-family: var(--pixel-font);
             color: #fff; 
             display: flex;
             animation: popUp 0.3s;
             
-            /* 真·马赛克锯齿边缘 (CSS Mask) */
-            --s: 10px; /* 锯齿大小 */
+            /* V36: 真·邮票/电影票半圆撕裂边缘 (Radial Gradient Mask) */
+            /* 左边孔洞 + 右边孔洞 */
             mask: 
-                conic-gradient(#0000 0 0) 50%/calc(100% - var(--s)) calc(100% - var(--s)),
-                linear-gradient(#000 0 0) content-box;
+                radial-gradient(circle at 0 50%, transparent 6px, black 6.5px) 0 0 / 100% 20px repeat-y,
+                linear-gradient(black, black);
             -webkit-mask: 
-                conic-gradient(#0000 0 0) 50%/calc(100% - var(--s)) calc(100% - var(--s)),
+                radial-gradient(circle at 0 10px, transparent 6px, black 6.5px) -10px 0 / 20px 24px repeat-y,
+                radial-gradient(circle at 100% 10px, transparent 6px, black 6.5px) 10px 0 / 20px 24px repeat-y,
                 linear-gradient(#000 0 0) content-box;
-            mask-repeat: no-repeat;
-            -webkit-mask-repeat: no-repeat;
-            
-            padding: 5px; /* 留出边缘 */
+            /* 复合遮罩逻辑：左右两排孔洞 */
+            -webkit-mask-composite: destination-in;
+            mask-composite: intersect;
+
+            padding: 5px; 
         }
-        /* 左右锯齿装饰 */
-        .ticket-stub::before, .ticket-stub::after {
-            content: ''; position: absolute; width: 8px; height: 100%; top:0; 
-            background-size: 10px 20px;
-            background-repeat: repeat-y;
+        /* 增加纹理质感 */
+        .ticket-stub::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+            pointer-events: none;
         }
         
         .stub-left {
@@ -326,10 +325,11 @@
             border-right: 2px dashed rgba(255,255,255,0.3);
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             text-align: center;
+            padding-left: 10px; /* 避开孔洞 */
         }
         .stub-right {
             width: 65%;
-            padding: 10px;
+            padding: 10px 15px 10px 10px; /* 右边避开孔洞 */
             display: flex; flex-direction: column;
         }
 
@@ -342,7 +342,7 @@
         .stub-info-row { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.3); padding: 4px 0; font-size: 10px; font-weight: bold; }
         .stub-main-txt { flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 14px; font-weight: bold; line-height: 1.3; padding: 5px; }
 
-        .item-delete { position: absolute; top: -5px; right: -5px; width: 20px; height: 20px; background: #333; color: #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; font-weight: bold; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10; border: 2px solid #fff; }
+        .item-delete { position: absolute; top: 5px; right: 25px; width: 20px; height: 20px; background: #333; color: #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; font-weight: bold; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10; border: 2px solid #fff; }
 
         .shop-item-desc { font-size: 10px; color: #999; margin-top: 4px; font-style: italic; }
 
@@ -359,7 +359,7 @@
             <div class="cat-row c-yellow"><div class="cat-label">自由探险 (SP)</div><div class="btn-grid"><button class="detail-btn" onclick="saveUser('ISTP','yellow', this)">ISTP</button><button class="detail-btn" onclick="saveUser('ISFP','yellow', this)">ISFP</button><button class="detail-btn" onclick="saveUser('ESTP','yellow', this)">ESTP</button><button class="detail-btn" onclick="saveUser('ESFP','yellow', this)">ESFP</button></div></div>
             <div class="cat-row c-blue"><div class="cat-label">忠诚守护 (SJ)</div><div class="btn-grid"><button class="detail-btn" onclick="saveUser('ISTJ','blue', this)">ISTJ</button><button class="detail-btn" onclick="saveUser('ISFJ','blue', this)">ISFJ</button><button class="detail-btn" onclick="saveUser('ESTJ','blue', this)">ESTJ</button><button class="detail-btn" onclick="saveUser('ESFJ','blue', this)">ESFJ</button></div></div>
         </div>
-        <div class="footer-logo-p1">王老十六 © WANG16 MBTI V35</div>
+        <div class="footer-logo-p1">王老十六 © WANG16 MBTI V36</div>
     </div>
 
     <div id="welcome-overlay" class="hidden">
@@ -651,7 +651,7 @@
 
         function collectEnergy(e){
             if(e) { e.preventDefault(); e.stopPropagation(); }
-            createParticle(e); // V35: 触发聚能动画
+            createParticle(e); // V36: 触发聚能动画
             
             const lastTime = parseInt(localStorage.getItem('w16_last_collect') || 0);
             const now = Date.now();
@@ -678,21 +678,18 @@
             if(navigator.vibrate) navigator.vibrate(50);
         }
 
-        // V35: 修复聚能粒子生成逻辑
+        // V36: 修复聚能粒子生成逻辑
         function createParticle(e) {
             const box = document.querySelector('.bulb-box');
             for(let i=0; i<8; i++) {
                 const p = document.createElement('div'); p.className = 'particle';
-                // 随机从四周飞入
                 const angle = Math.random() * Math.PI * 2;
-                const distance = 60 + Math.random() * 40; // 距离中心 60-100px
+                const distance = 60 + Math.random() * 40; 
                 const tx = Math.cos(angle) * distance + 'px';
                 const ty = Math.sin(angle) * distance + 'px';
                 
                 p.style.setProperty('--tx', tx); 
                 p.style.setProperty('--ty', ty);
-                
-                // V35: 设定吸入动画
                 p.style.animation = `suckIn 0.6s ease-out forwards`;
                 
                 box.appendChild(p); 
@@ -801,7 +798,7 @@
             openShop(); 
         }
 
-        // --- V35: 票根渲染 (横版 2:1 像素风) ---
+        // --- V36: 票根渲染 (真·半圆撕裂边缘) ---
         function openDiary() {
             document.getElementById('diary-overlay').classList.remove('hidden');
             renderTickets('all');
@@ -885,7 +882,7 @@
                         </div>
                     `;
                 } else {
-                    // V35 兑换券: 横版 2:1 像素 ZPD 风格
+                    // V36: 真·1:1 复刻兑换券
                     div.className = 'ticket-stub'; 
                     div.innerHTML = `
                         ${deleteBtn}
