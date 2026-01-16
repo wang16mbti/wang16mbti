@@ -3,9 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>王老十六 MBTI V27 (奔跑小人版)</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>王老十六 MBTI</title> <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="王老十六">
+
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23333'/%3E%3Cpath d='M100 100 h312 v60 h-126 v80 h100 v60 h-100 v80 h126 v60 h-312 v-60 h126 v-80 h-100 v-60 h100 v-80 h-126 z' fill='%2300b894'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23333'/%3E%3Cpath d='M100 100 h312 v60 h-126 v80 h100 v60 h-100 v80 h126 v60 h-312 v-60 h126 v-80 h-100 v-60 h100 v-80 h-126 z' fill='%2300b894'/%3E%3C/svg%3E">
+
     <style>
         /* ============================
            0. 全局基础 & 调色板
@@ -52,25 +58,24 @@
         .footer-logo-p1 { text-align: center; margin-top: 30px; font-size: 12px; font-weight: bold; color: #b2bec3; z-index: 2;}
 
         /* ============================
-           P2: 主页 (修改点：小人动画)
+           P2: 主页
            ============================ */
         #main-page { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; position: relative; }
         .bg-orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.6; z-index: -1; transition: background 1s ease; animation: floatOrb 10s infinite ease-in-out; } 
         .heal-card { width: 85%; max-width: 360px; height: 500px; background: rgba(255,255,255,0.85); backdrop-filter: blur(30px); border-radius: 30px; padding: 25px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; border: 1px solid rgba(255,255,255,0.8); position: relative; overflow: visible; }
         .card-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; position: relative; z-index: 2; }
         
-        /* 奔跑小人区域 (V27 新增) */
+        /* 奔跑小人区域 (V28 重绘) */
         .bulb-box { height: 140px; width: 140px; display: flex; justify-content: center; align-items: center; margin: 10px 0; position: relative; cursor: pointer; }
-        /* 轨道环 */
         .orbit-star { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px dashed rgba(0,0,0,0.05); animation: spinOrbit 10s linear infinite; pointer-events: none; }
         .orbit-star::before { content: ''; position: absolute; top: -4px; left: 50%; width: 8px; height: 8px; background: #fdcb6e; border-radius: 50%; transform: translateX(-50%); box-shadow: 0 0 10px #fdcb6e; }
         
-        /* 像素小人 SVG */
-        .runner-svg { width: 100px; height: 100px; z-index: 10; transition: transform 0.1s; filter: drop-shadow(0 5px 0 rgba(0,0,0,0.1)); }
+        /* 像素小人 SVG 设置 */
+        .runner-svg { width: 80px; height: 80px; z-index: 10; transition: transform 0.1s; filter: drop-shadow(4px 4px 0 rgba(0,0,0,0.1)); }
         .runner-svg:active { transform: scale(0.9); }
-        .runner-svg path { fill: var(--active-color); } /* 小人颜色跟随主题 */
+        .runner-svg path { fill: var(--active-color); } 
         
-        /* 跑步帧动画 */
+        /* 跑步帧动画控制 */
         .run-frame-1 { display: block; }
         .run-frame-2 { display: none; }
         .bulb-box.frame-2 .run-frame-1 { display: none; }
@@ -148,7 +153,6 @@
         #welcome-overlay { position: fixed; inset: 0; z-index: 2000; background: rgba(255,255,255,0.95); display: flex; justify-content: center; align-items: center; animation: fadeIn 0.4s ease-out; }
         .welcome-card { width: 80%; max-width: 320px; background: #fff; border-radius: 24px; padding: 40px 30px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.15); border: 1px solid rgba(0,0,0,0.05); }
         .w-icon { font-size: 60px; margin-bottom: 20px; display: inline-block; } .w-main { font-size: 26px; font-weight: 900; margin-bottom: 30px; color: #333; } .w-quote-box { background: #f8f9fa; border-radius: 16px; padding: 20px; margin-bottom: 30px; } 
-        /* 修复：恭喜按钮颜色 */
         .w-btn { width: 100%; padding: 16px; border-radius: 14px; border: none; background: #333; color: #fff; font-size: 16px; font-weight: 900; cursor: pointer; transition: background 0.3s; }
 
         /* Profile */
@@ -186,6 +190,16 @@
         .key-cancel { flex: 1; background: #eee; color: #555; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
 
         @keyframes spinOrbit { from{transform:rotate(0deg)} to{transform:rotate(360deg)} } @keyframes bulbFlash { 0% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(253, 203, 110, 0)); color: #dfe6e9; } 40% { transform: scale(1.15); filter: drop-shadow(0 0 40px rgba(253, 203, 110, 0.9)); color: #fdcb6e; } 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(253, 203, 110, 0.4)); color: #fdcb6e; } } @keyframes scoreScale { 0%{transform:scale(1)} 50%{transform:scale(1.5)} 100%{transform:scale(1)} } @keyframes floatFlat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-15px)} } @keyframes popUp { from{transform:scale(0.8);opacity:0} to{transform:scale(1);opacity:1} } @keyframes fadeUp { 0%{opacity:0;transform:translate(-50%,20px)} 20%{opacity:1;transform:translate(-50%,0)} 80%{opacity:1} 100%{opacity:0;transform:translate(-50%,-20px)} } @keyframes flyUp { 0%{transform:translate(-50%, -100%); opacity:1} 100%{transform:translate(-50%, -180%); opacity:0} } @keyframes fadeIn { from{opacity:0} to{opacity:1} } @keyframes slideInUp { from{transform:translateY(50px);opacity:0} to{transform:translateY(0);opacity:1} }
+        
+        /* 悬浮关闭按钮 */
+        .floating-close {
+            position: absolute; right: 20px; top: 20px; z-index: 100;
+            width: 40px; height: 40px; border-radius: 50%;
+            background: rgba(255,255,255,0.9);
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
 
     </style>
 </head>
@@ -202,7 +216,7 @@
             <div class="cat-row c-yellow"><div class="cat-label">自由探险 (SP)</div><div class="btn-grid"><button class="detail-btn" onclick="saveUser('ISTP','yellow', this)">ISTP</button><button class="detail-btn" onclick="saveUser('ISFP','yellow', this)">ISFP</button><button class="detail-btn" onclick="saveUser('ESTP','yellow', this)">ESTP</button><button class="detail-btn" onclick="saveUser('ESFP','yellow', this)">ESFP</button></div></div>
             <div class="cat-row c-blue"><div class="cat-label">忠诚守护 (SJ)</div><div class="btn-grid"><button class="detail-btn" onclick="saveUser('ISTJ','blue', this)">ISTJ</button><button class="detail-btn" onclick="saveUser('ISFJ','blue', this)">ISFJ</button><button class="detail-btn" onclick="saveUser('ESTJ','blue', this)">ESTJ</button><button class="detail-btn" onclick="saveUser('ESFJ','blue', this)">ESFJ</button></div></div>
         </div>
-        <div class="footer-logo-p1">王老十六 © WANG16 MBTI V27</div>
+        <div class="footer-logo-p1">王老十六 © WANG16 MBTI V29</div>
     </div>
 
     <div id="welcome-overlay" class="hidden">
@@ -234,11 +248,21 @@
             <div class="bulb-box" onmousedown="collectEnergy(event)" ontouchstart="collectEnergy(event)">
                 <div class="orbit-star"></div>
                 <svg class="runner-svg run-frame-1" viewBox="0 0 16 16">
-                    <path d="M4,3 h7 v1 h1 v3 h-1 v1 h-4 v-1 h-3 z" /> <path d="M5,8 h6 v4 h-1 v1 h-4 v-1 h-1 z" /> <path d="M3,9 h2 v2 h-2 z M2,8 h1 v1 h-1 z" /> <path d="M11,9 h2 v1 h-2 z" /> <path d="M5,13 h2 v1 h-2 z M9,13 h2 v1 h-2 z" /> </svg>
+                    <path d="M6,1 h4 v4 h-4 z" />
+                    <path d="M5,5 h6 v5 h-6 z" />
+                    <path d="M5,10 h2 v5 h-2 z" /> 
+                    <path d="M9,10 h2 v3 h2 v-2 h-2 z" />
+                    <path d="M3,6 h2 v3 h-2 z" />
+                    <path d="M11,6 h2 v3 h-2 z" />
+                </svg>
                 <svg class="runner-svg run-frame-2" viewBox="0 0 16 16">
-                    <path d="M4,4 h7 v1 h1 v3 h-1 v1 h-4 v-1 h-3 z" /> <path d="M5,9 h6 v4 h-1 v1 h-4 v-1 h-1 z" /> 
-                    <path d="M3,10 h2 v2 h-2 z M2,9 h1 v1 h-1 z" /> 
-                    <path d="M11,8 h2 v1 h-2 z" /> <path d="M4,13 h2 v-1 h-1 v-1 h-1 z M10,13 h2 v1 h-2 z" /> </svg>
+                     <path d="M6,2 h4 v4 h-4 z" />
+                    <path d="M5,6 h6 v5 h-6 z" />
+                    <path d="M4,11 h3 v-1 h-1 v-2 h-2 z" /> 
+                    <path d="M9,11 h2 v5 h-2 z" />
+                    <path d="M11,7 h3 v2 h-3 z" />
+                    <path d="M3,7 h2 v2 h-2 z" />
+                </svg>
             </div>
             
             <div id="userId" class="user-badge"><span id="typeText" class="type-highlight"></span> 专属空间</div>
@@ -318,13 +342,13 @@
         </div>
     </div>
 
-    <div id="shop-overlay" class="hidden" style="position:fixed;inset:0;z-index:2500;background:rgba(255,255,255,0.95);padding:30px;overflow-y:auto;">
-        <div style="max-width:400px;margin:0 auto;">
+    <div id="shop-overlay" class="hidden" style="position:fixed;inset:0;z-index:2500;background:rgba(255,255,255,0.98);padding:30px;overflow-y:auto;">
+        <div class="floating-close" onclick="closeShop()">
+            <i class="fa-solid fa-xmark" style="font-size:20px;color:#333;"></i>
+        </div>
+        <div style="max-width:400px;margin:20px auto 0;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
                 <h2 style="margin:0;color:#333;"><i class="fa-solid fa-store"></i> 能量商店</h2>
-                <div onclick="closeShop()" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:#eee;border-radius:50%;cursor:pointer;">
-                    <i class="fa-solid fa-xmark" style="font-size:20px;color:#333;"></i>
-                </div>
             </div>
             <div style="background:#f1f2f6;padding:15px;border-radius:12px;margin-bottom:20px;font-weight:bold;color:#555;">
                 当前能量: <span id="shop-score" style="color:#f1c40f;font-size:20px;">0</span> ⚡
@@ -334,13 +358,12 @@
     </div>
 
     <div id="diary-overlay" class="hidden" style="position:fixed;inset:0;z-index:2500;background:#fff;padding:20px;overflow-y:auto;">
-        <div style="max-width:400px;margin:0 auto;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-                <h2 style="margin:0;color:#333;"><i class="fa-solid fa-pen-nib"></i> 心情手账</h2>
-                <div onclick="document.getElementById('diary-overlay').classList.add('hidden')" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:#eee;border-radius:50%;cursor:pointer;">
-                    <i class="fa-solid fa-xmark" style="font-size:20px;"></i>
-                </div>
-            </div>
+        <div class="floating-close" onclick="closeDiary()">
+            <i class="fa-solid fa-xmark" style="font-size:20px;color:#333;"></i>
+        </div>
+        
+        <div style="max-width:400px;margin:20px auto 0;">
+            <h2 style="margin:0 0 20px 0;color:#333;"><i class="fa-solid fa-pen-nib"></i> 心情手账</h2>
 
             <div class="input-area">
                 <div class="switch-row">
@@ -403,7 +426,7 @@
         let currentTarget = "";
         const COOLDOWN_TIME = 60 * 60 * 1000; 
 
-        // V27 更新：商品列表
+        // V28 更新：商品列表
         const shopItems = [
             { id: 'skin_diary', name: '日记皮肤', desc: '解锁复古/暗黑/少女心主题', price: 200, icon: '📔' },
             { id: 'skin_coupon', name: '兑换券皮肤', desc: '解锁烫金/全息/磨砂质感', price: 150, icon: '🎟️' },
@@ -456,7 +479,7 @@
             document.documentElement.style.setProperty('--rpg-theme', colors.main);
         }
 
-        // V27: 小人动画逻辑
+        // V28: 小人动画逻辑
         let runnerInterval;
         function startRunner() {
             if(runnerInterval) clearInterval(runnerInterval);
@@ -680,10 +703,14 @@
             alert(`✨ 已解锁 [${item.name}]！\n(请在设置中查看或截图保存)`);
         }
 
-        // --- V25.1 修复版日记逻辑 ---
+        // --- V28 修复版日记逻辑 ---
         function openDiary() {
             document.getElementById('diary-overlay').classList.remove('hidden');
             renderTickets('all');
+        }
+        // 新增关闭函数
+        function closeDiary() {
+            document.getElementById('diary-overlay').classList.add('hidden');
         }
         
         function switchDiaryMode(mode) {
